@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="GB2312" ?>
+
+<corpus lang="Chinese">
+<lexelt item="中医">
+<instance id="中医.1">
+<answer instance="中医.1" senseid="traditional_Chinese_medical_science"/>
+<context>
+
+西医出身的她，转而钻研<head>中医</head>理论，试图从前人的经验中吸取有益的东西。
+
+</context>
+<postagging>
+<word id="0" pos="n">
+<token>西医</token>
+</word>
+<word id="1" pos="v">
+<token>出身</token>
+</word>
+<word id="2" pos="u">
+<token>的</token>
+</word>
+<word id="3" pos="r">
+<token>她</token>
+</word>
+<word id="4" pos="w">
+<token>，</token>
+</word>
+<word id="5" pos="v">
+<token>转</token>
+</word>
+<word id="6" pos="c">
+<token>而</token>
+</word>
+<word id="7" pos="v">
+<token>钻研</token>
+</word>
+<word id="8" pos="n">
+<token>中医</token>
+</word>
+<word id="9" pos="n">
+<token>理论</token>
+</word>
+<word id="10" pos="w">
+<token>，</token>
+</word>
+<word id="11" pos="v">
+<token>试图</token>
+</word>
+<word id="12" pos="p">
+<token>从</token>
+</word>
+<word id="13" pos="n">
+<token>前人</token>
+</word>
+<word id="14" pos="u">
+<token>的</token>
+</word>
+<word id="15" pos="n">
+<token>经验</token>
+</word>
+<word id="16" pos="f">
+<token>中</token>
+</word>
+<word id="17" pos="v">
+<token>吸取</token>
+</word>
+<word id="18" pos="a">
+<token>有益</token>
+</word>
+<word id="19" pos="u">
+<token>的</token>
+</word>
+<word id="20" pos="n">
+<token>东西</token>
+</word>
+<word id="21" pos="w">
+<token>。</token>
+</word>
+</postagging></instance>
+
+<instance id="中医.2">
+<answer instance="中医.2" senseid="traditional_Chinese_medical_science"/>
+<context>
+
+<head>中医</head>不是“慢郎中”对症急诊有绝招中医院遍设急诊科
+
+</context>
+<postagging>
+<word id="0" pos="n">
+<token>中医</token>
+</word>
+<word id="1" pos="d">
+<token>不</token>
+</word>
+<word id="2" pos="v">
+<token>是</token>
+</word>
+<word id="3" pos="w">
+<token>“</token>
+</word>
+<word id="4" pos="a">
+<token>慢</token>
+</word>
+<word id="5" pos="n">
+<token>郎中</token>
+</word>
+<word id="6" pos="w">
+<token>”</token>
+</word>
+<word id="7" pos="v">
+<token>对</token>
+</word>
+<word id="8" pos="Ng">
+<token>症</token>
+</word>
+<word id="9" pos="n">
+<token>急诊</token>
+</word>
+<word id="10" pos="v">
+<token>有</token>
+</word>
+<word id="11" pos="n">
+<token>绝招</token>
+</word>
+<word id="12" pos="n">
+<token>中医院</token>
+</word>
+<word id="13" pos="v">
+<token>遍</token>
+</word>
+<word id="14" pos="v">
+<token>设</token>
+</word>
+<word id="15" pos="n">
+<token>急诊科</token>
+</word>
+</postagging></instance>
+
+
+</lexelt>
+</corpus>
