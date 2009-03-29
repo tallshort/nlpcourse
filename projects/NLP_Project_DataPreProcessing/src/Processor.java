@@ -4,8 +4,8 @@ public class Processor {
         DataProcessing dp = new DataProcessing();
         for (int i = -3; i <= 0; i++) {
             for (int j = 0; j <= 3; j++) {
-                // At least two tokens as the features
-                if (Math.abs(i - j) >= 2) {
+                // At least one tokens as the features
+                if (Math.abs(i - j) >= 1) {
                     generateData(dp, i, j);
                 }
             }

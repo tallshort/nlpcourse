@@ -34,7 +34,7 @@ public class DataProcessing {
 //                    continue;
 //                }
                 String item = lexeltElement.getAttributeValue("item");
-                buffer.append("item: " + item + "\n");
+                // buffer.append("item: " + item + "\n");
                 Elements instanceElements = lexeltElement.getChildElements("instance");
                 for (int i = 0; i < instanceElements.size(); i++) {
                     Element instanceElement = instanceElements.get(i);
