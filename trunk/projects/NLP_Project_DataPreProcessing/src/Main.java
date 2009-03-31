@@ -11,19 +11,19 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        String[] algorithms = {"NaiveBayes", "SMO"};
-        for (String algorithm : algorithms) {
-            for (int i = -3; i <= 0; i++) {
-                for (int j = 0; j <= 3; j++) {
-                    if (Math.abs(i - j) >= 1) {
-                        classify(i, j, algorithm);
-                        compare(i, j, algorithm);
-                    }
-                }
-            }
-        }
-        // classify(-1, 1, "SMO");
-        // compare(-1, 1, "SMO");
+//        String[] algorithms = { "SMO" };
+//        for (String algorithm : algorithms) {
+//            for (int i = -3; i <= 0; i++) {
+//                for (int j = 0; j <= 3; j++) {
+//                    if (Math.abs(i - j) >= 1) {
+//                        classify(i, j, algorithm);
+//                        compare(i, j, algorithm);
+//                    }
+//                }
+//            }
+//        }
+        classify(-5, 5, "NaiveBayes");
+        compare(-5, 5, "NaiveBayes");
     }
 
     private static void classify(int startOffset, int endOffset,
@@ -34,12 +34,10 @@ public class Main {
         // 下所有词和其出现的序号
         HashMap<String, String> h = r.read();
         /* 下面两个文件分别为 已经解析过的 训练集文件 与 测试集文件，即张坚做好的那些文件 */
-        File f = new File(
-                "Chinese_train_pos.xml_"
-                        + startOffset + "_" + endOffset + ".txt");
-        File ft = new File(
-                "Chinese_test_pos.xml_"
-                        + startOffset + "_" + endOffset + ".txt");
+        File f = new File("Chinese_train_pos.xml_" + startOffset + "_"
+                + endOffset + ".txt");
+        File ft = new File("Chinese_test_pos.xml_" + startOffset + "_"
+                + endOffset + ".txt");
         try {
             BufferedReader br = new BufferedReader(new FileReader(f));
             BufferedReader br1 = new BufferedReader(new FileReader(ft));
@@ -86,8 +84,8 @@ public class Main {
 
     private static void compare(int startOffset, int endOffset, String modelName) {
         File f1 = new File("ChineseLS.test.key");
-        File f2 = new File("result-" + modelName + startOffset
-                + endOffset + ".txt");
+        File f2 = new File("result-" + modelName + startOffset + endOffset
+                + ".txt");
         try {
             int count = 0; // 记录总结果个数
             int equal = 0;
