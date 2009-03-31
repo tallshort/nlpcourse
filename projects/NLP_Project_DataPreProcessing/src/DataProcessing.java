@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import nu.xom.Builder;
@@ -19,7 +20,7 @@ public class DataProcessing {
         expectedSenseMap = getExpectedSenseMap();
     }
     
-    public void process(String filePath, int start, int end) {
+    public void process(String filePath, int startOffset, int endOffset) {
         buffer = new StringBuilder();
         try {
             Builder builder = new Builder(false);
@@ -30,21 +31,20 @@ public class DataProcessing {
             // String target = "·¢";
             for (int k = 0; k < lexeltElements.size(); k++) {
                 Element lexeltElement = lexeltElements.get(k);
-//                if (!lexeltElement.getAttributeValue("item").equals(target)) {
-//                    continue;
-//                }
                 String item = lexeltElement.getAttributeValue("item");
                 // buffer.append("item: " + item + "\n");
                 Elements instanceElements = lexeltElement.getChildElements("instance");
                 for (int i = 0; i < instanceElements.size(); i++) {
                     Element instanceElement = instanceElements.get(i);
+                    List<String> tokenList = getTokenList(instanceElement);
                     String instanceId = instanceElement.getAttributeValue("id");
-                    // System.out.print(instanceId + separator);
+                    // buffer.append(instanceId + separator);
                     Element postaggingElement = instanceElement.getFirstChildElement("postagging");
                     Element contextElement = instanceElement.getFirstChildElement("context");
                     
                     String prefixContext = contextElement.getChild(0).getValue().trim();
                     String currentPrefixContext = "";
+                    int currentIndex = 0;
                     
                     Elements wordElements = postaggingElement.getChildElements("word");
                     for (int j = 0; j < wordElements.size(); j++) {
@@ -53,18 +53,20 @@ public class DataProcessing {
                         if (subwordElements.size() == 0) {
                             String token = wordElement.getFirstChildElement("token").getValue().trim();
                             if (token.equals(item) && currentPrefixContext.equals(prefixContext)) {
-                                printTokens(instanceId, instanceElement, wordElements, j, start, end);  
+                                printTokens(instanceId, instanceElement, tokenList, currentIndex, startOffset, endOffset);  
                                 break;
                             }
+                            currentIndex++;
                             currentPrefixContext += token;
                         } else {
                             for (int m = 0; m < subwordElements.size(); m++) {
                                 Element subwordElement = subwordElements.get(m);
                                 String token = subwordElement.getFirstChildElement("token").getValue().trim();
                                 if (token.equals(item) && currentPrefixContext.equals(prefixContext)) {
-                                    printTokens(instanceId, instanceElement, subwordElements, m, start, end);   
+                                    printTokens(instanceId, instanceElement, tokenList, currentIndex, startOffset, endOffset);   
                                     break;
                                 }
+                                currentIndex++;
                                 currentPrefixContext += token;
                             }
                         }
@@ -74,24 +76,41 @@ public class DataProcessing {
                 }
                 buffer.append("<END>\n");
             }
-            TextFile.write(filePath + "_" + start + "_" + end + ".txt", buffer.toString());
+            TextFile.write(filePath + "_" + startOffset + "_" + endOffset + ".txt", buffer.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-    private void printTokens(String instanceId, Element instanceElement, Elements wordElements, int index, int start, int end) {
-        for (int i = start; i <= end; i++) {
-            if (i != 0) {
-                printToken(instanceId, instanceElement, wordElements, index + i, false);                
-            }  
+    private List<String> getTokenList(Element instanceElement) {
+        Element postaggingElement = instanceElement.getFirstChildElement("postagging");
+        List<String> posList = new ArrayList<String>();
+        
+        Elements wordElements = postaggingElement.getChildElements("word");
+        for (int j = 0; j < wordElements.size(); j++) {
+            Element wordElement = wordElements.get(j);
+            Elements subwordElements = wordElement.getChildElements("subword");
+            if (subwordElements.size() == 0) {
+               posList.add(wordElement.getAttributeValue("pos"));
+            } else {
+                for (int m = 0; m < subwordElements.size(); m++) {
+                    Element subwordElement = subwordElements.get(m);
+                    posList.add(subwordElement.getAttributeValue("pos"));
+                }
+            }
         }
-        printToken(instanceId, instanceElement, wordElements, index, true);
+        return posList;
     }
     
-    private void printToken(String instanceId, Element instanceElement, Elements wordElements, int index, boolean target) {
-        if (index >= 0 && index < wordElements.size()) {
-            Element wordElement = wordElements.get(index);        
+    private void printTokens(String instanceId, Element instanceElement, List<String> posList, int index, int startOffset, int endOffset) {
+        for (int i = startOffset; i <= endOffset; i++) {
+            printToken(instanceId, instanceElement, posList, index + i, false);                 
+        }
+        printToken(instanceId, instanceElement, posList, index, true);
+    }
+    
+    private void printToken(String instanceId, Element instanceElement, List<String> posList, int index, boolean target) {
+        if (index >= 0 && index < posList.size()) {    
             if (target) {
                 Element answerElement = instanceElement.getFirstChildElement("answer");
                 String senseid = answerElement.getAttributeValue("senseid");
@@ -101,7 +120,7 @@ public class DataProcessing {
                     buffer.append(senseid); 
                 }
             } else {
-                String pos = wordElement.getAttributeValue("pos");
+                String pos = posList.get(index);
                 buffer.append(pos + separator);               
             }
             // String token = wordElement.getFirstChildElement("token").getValue().trim();
