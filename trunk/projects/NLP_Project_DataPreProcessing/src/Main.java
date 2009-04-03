@@ -11,7 +11,7 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-//        String[] algorithms = { "SMO" };
+        String[] algorithms = { "NaiveBayes" };
 //        for (String algorithm : algorithms) {
 //            for (int i = -3; i <= 0; i++) {
 //                for (int j = 0; j <= 3; j++) {
@@ -22,8 +22,8 @@ public class Main {
 //                }
 //            }
 //        }
-        classify(-5, 5, "NaiveBayes");
-        compare(-5, 5, "NaiveBayes");
+        classify(-2, 3, "SMO");
+        compare(-2, 3, "SMO");
     }
 
     private static void classify(int startOffset, int endOffset,
