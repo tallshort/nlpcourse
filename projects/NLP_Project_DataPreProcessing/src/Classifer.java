@@ -71,6 +71,7 @@ public class Classifer {
             NormalizedPolyKernel kernelPuk = new NormalizedPolyKernel();
             Puk kernelP = new Puk();
             smo.setKernel(kernelPuk);
+            smo.setC(1.4);
             return smo;
         } else if (a.equals("MP")) {
             MultilayerPerceptron mp = new MultilayerPerceptron();
