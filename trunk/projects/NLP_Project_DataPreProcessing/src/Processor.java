@@ -18,7 +18,8 @@ public class Processor {
 //                }
 //            }
 //        }
-        generateData(dp, -1, 2);
+        // generateData(dp, -1, 2);
+        System.out.println(dp.getTotalWordSet());
     }
 
     /**
