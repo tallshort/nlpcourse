@@ -24,24 +24,28 @@ public class DataProcessing {
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
     
-    private Set<String> ignoreWords;
+    // private Set<String> ignoreWords;
+    
+    private Set<String> totalWordSet;
     
     public DataProcessing() {
         expectedSenseMap = getExpectedSenseMap();
-        ignoreWords = new HashSet<String>();
-        ignoreWords.add("£¬");
-        ignoreWords.add("¡£");
-        ignoreWords.add("£¿");
-        ignoreWords.add("¡°");
-        ignoreWords.add("¡±");
-        ignoreWords.add("£º");
-        ignoreWords.add("£¡");
-        ignoreWords.add("£©");
-        ignoreWords.add("£¨");
-        ignoreWords.add("£»");
-        ignoreWords.add("¡¢");
-        ignoreWords.add("¡¶");
-        ignoreWords.add("¡·");
+//        ignoreWords = new HashSet<String>();
+//        ignoreWords.add("£¬");
+//        ignoreWords.add("¡£");
+//        ignoreWords.add("£¿");
+//        ignoreWords.add("¡°");
+//        ignoreWords.add("¡±");
+//        ignoreWords.add("£º");
+//        ignoreWords.add("£¡");
+//        ignoreWords.add("£©");
+//        ignoreWords.add("£¨");
+//        ignoreWords.add("£»");
+//        ignoreWords.add("¡¢");
+//        ignoreWords.add("¡¶");
+//        ignoreWords.add("¡·");
+        
+        totalWordSet = this.getTotalWordSet();
     }
     
     public void process(String filePath, int startOffset, int endOffset) {
@@ -123,19 +127,27 @@ public class DataProcessing {
             Elements subwordElements = wordElement.getChildElements("subword");
             if (subwordElements.size() == 0) {
                 String token = wordElement.getFirstChildElement("token").getValue().trim();
-                if (ignoreWords.contains(token)) {
+                if (wordElement.getAttributeValue("pos").equals("w")) {
                     tokenEntryList.add(new TokenEntry(ignoreValue, ignoreValue));
                 } else {
-                    tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), token));
+                    if (totalWordSet.contains(token)) {
+                        tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), token));
+                    } else {
+                        tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), ignoreValue));
+                    }
                 }
             } else {
                 for (int m = 0; m < subwordElements.size(); m++) {
                     Element subwordElement = subwordElements.get(m);
                     String token = subwordElement.getFirstChildElement("token").getValue().trim();
-                    if (ignoreWords.contains(token)) {
+                    if (subwordElement.getAttributeValue("pos").equals("w")) {
                         tokenEntryList.add(new TokenEntry(ignoreValue, ignoreValue));
                     } else {
-                        tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), token));
+                        if (totalWordSet.contains(token)) {
+                            tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), token));
+                        } else {
+                            tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), ignoreValue));
+                        }
                     }
                 }
             }

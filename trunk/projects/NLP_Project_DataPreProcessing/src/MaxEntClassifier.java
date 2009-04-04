@@ -13,8 +13,8 @@ public class MaxEntClassifier {
         int iteration = 100;
         int startOffset = -1;
         int endOffset = 2;
-        double rightNum=0;  //微平均 记录正确的个数
-        double totalNum=0;  //微平均 记录总共的个数
+        double rightNum = 0; // 微平均 记录正确的个数
+        double totalNum = 0; // 微平均 记录总共的个数
         ArrayList<Double> accuarcyList = new ArrayList<Double>();
 
         for (String word : wordList) {
@@ -37,7 +37,7 @@ public class MaxEntClassifier {
 
                     String strProc = null;
                     Pattern pattern = Pattern
-                        .compile("Accuracy:(.+)% [(](\\d+)/(\\d+)[)]");
+                            .compile("Accuracy:(.+)% [(](\\d+)/(\\d+)[)]");
                     while ((strProc = in.readLine()) != null) {
                         Matcher matcher = pattern.matcher(strProc);
                         if (matcher.find()) {
@@ -64,7 +64,7 @@ public class MaxEntClassifier {
             sum = sum + accuracy;
         }
         System.out.println("Macro average: " + sum / 40);
-        System.out.println("Micro average:" + rightNum/totalNum);
+        System.out.println("Micro average: " + rightNum / totalNum);
     }
 
     private static List<String> getWordList() {
