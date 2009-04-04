@@ -3,22 +3,22 @@ import java.util.List;
 
 public class Processor {
 
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) {     
         DataProcessing dp = new DataProcessing();
-//        dp.setClassLabelFirst(true);
-//        dp.setSeparator(" ");
-//        dp.setOnefilePerItem(true);
-        for (int i = -3; i <= 0; i++) {
-            for (int j = 0; j <= 3; j++) {
-                // At least one tokens as the features
-                if (Math.abs(i - j) >= 1) {
-                    generateData(dp, i, j);
-                }
-            }
-        }
-        // generateData(dp, -2, 2);
-        // dp.process("Chinese_train_pos.xml", -2, 3);
+        // For maxent
+        dp.setClassLabelFirst(true);
+        dp.setSeparator(" ");
+        dp.setOnefilePerItem(true);
+        dp.setIncludeToken(true);
+//        for (int i = -3; i <= 0; i++) {
+//            for (int j = 0; j <= 3; j++) {
+//                // At least one tokens as the features
+//                if (Math.abs(i - j) >= 1) {
+//                    generateData(dp, i, j);
+//                }
+//            }
+//        }
+        generateData(dp, -1, 2);
     }
 
     /**
