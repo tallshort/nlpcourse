@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import weka.classifiers.Classifier;
@@ -26,8 +27,10 @@ public class Classifer {
     String modelName; // 模型名
     String wordName; // 当前词
     int AttributeNum; // 属性的个数
+    int posNum; //POS 个数
     int start;
     int end;
+    HashSet<String> token;  //存放所有集合中的词
 
     public Classifer(List<String> wordList, List<String> testList,
             String model, String name, int startOffset, int endOffset)// 每一个词的所有训练信息
@@ -38,6 +41,7 @@ public class Classifer {
         tests = testList;
         start = startOffset;
         end = endOffset;
+        posNum = end - start;
         classes = new ArrayList<String>();
         try {
             executeWekaTutorial(); // 执行分类主函数
@@ -196,8 +200,17 @@ public class Classifer {
         Vector.addElement("Ug");
         Vector.addElement("na");
         Vector.addElement("nx");
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < posNum; i++) { //添加词性的 Attribute
             allAttributes.addElement(new Attribute(String.valueOf(i), Vector));
+        }
+        FastVector tokenVector=new FastVector(token.size()); //产生token 大小的FastVector
+        for(String s : token)
+        {
+        	token.add(s);
+        }
+        for(int i=0;i<AttributeNum-posNum;i++)  //添加 token的 attribute
+        {
+        	allAttributes.addElement(new Attribute(String.valueOf(i),tokenVector));
         }
         FastVector result = new FastVector(l.size()); // 添加 预测属性
         for (int i = 0; i < l.size(); i++) {
