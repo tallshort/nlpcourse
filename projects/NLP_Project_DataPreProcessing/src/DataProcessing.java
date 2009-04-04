@@ -18,7 +18,8 @@ public class DataProcessing {
     private boolean classLabelFirst = false;
     private boolean onefilePerItem = false;
     private boolean includeToken = false;
-    private int includeTokenOffset = 1;
+    private int includeTokenPreOffset = 1;
+    private int includeTokenPostOffset = 4;
     
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
@@ -112,10 +113,6 @@ public class DataProcessing {
         }
     }
     
-//    private Set<String> getTrainWordSet() {
-//        Set<String> wordSet = new HashSet<String>()
-//    }
-    
     private List<TokenEntry> getTokenEntryList(Element instanceElement) {
         Element postaggingElement = instanceElement.getFirstChildElement("postagging");
         List<TokenEntry> tokenEntryList = new ArrayList<TokenEntry>();
@@ -152,7 +149,7 @@ public class DataProcessing {
         }
         printTokenEntryItems(instanceId, instanceElement, tokenEntryList, true, index, startOffset, endOffset);
         if (includeToken) {
-            printTokenEntryItems(instanceId, instanceElement, tokenEntryList, false, index, startOffset - includeTokenOffset, endOffset + includeTokenOffset);              
+            printTokenEntryItems(instanceId, instanceElement, tokenEntryList, false, index, startOffset - includeTokenPreOffset, endOffset + includeTokenPostOffset);              
         }
         if (!classLabelFirst) {
             printToken(instanceId, instanceElement, tokenEntryList, true, index, true);            
@@ -276,12 +273,58 @@ public class DataProcessing {
         this.includeToken = includeToken;
     }
 
-    public int getIncludeTokenOffset() {
-        return includeTokenOffset;
+    public int getIncludeTokenPreOffset() {
+        return includeTokenPreOffset;
     }
 
-    public void setIncludeTokenOffset(int includeTokenOffset) {
-        this.includeTokenOffset = includeTokenOffset;
+    public void setIncludeTokenPreOffset(int includeTokenPreOffset) {
+        this.includeTokenPreOffset = includeTokenPreOffset;
+    }
+
+    public int getIncludeTokenPostOffset() {
+        return includeTokenPostOffset;
+    }
+
+    public void setIncludeTokenPostOffset(int includeTokenPostOffset) {
+        this.includeTokenPostOffset = includeTokenPostOffset;
+    }
+    
+    public static HashSet<String> getTotalWordSet() {
+        HashSet<String> wordSet = new HashSet<String>();
+        try {
+            Builder builder = new Builder(false);
+            Document doc = builder.build("Chinese_train_pos.xml");
+            Element corpus = doc.getRootElement();
+            Elements lexeltElements = corpus.getChildElements("lexelt");
+            
+            for (int k = 0; k < lexeltElements.size(); k++) {
+                Element lexeltElement = lexeltElements.get(k);
+                Elements instanceElements = lexeltElement.getChildElements("instance");
+                for (int i = 0; i < instanceElements.size(); i++) {
+                    Element instanceElement = instanceElements.get(i);
+                    Element postaggingElement = instanceElement.getFirstChildElement("postagging");                   
+                    Elements wordElements = postaggingElement.getChildElements("word");
+                    for (int j = 0; j < wordElements.size(); j++) {
+                        Element wordElement = wordElements.get(j);
+                        Elements subwordElements = wordElement.getChildElements("subword");
+                        if (subwordElements.size() == 0) {
+                            String token = wordElement.getFirstChildElement("token").getValue().trim();
+                            wordSet.add(token);
+                        } else {
+                            for (int m = 0; m < subwordElements.size(); m++) {
+                                Element subwordElement = subwordElements.get(m);
+                                String token = subwordElement.getFirstChildElement("token").getValue().trim();
+                                wordSet.add(token);
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return wordSet;
     }
 
 }

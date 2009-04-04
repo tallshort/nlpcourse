@@ -43,6 +43,7 @@ public class Classifer {
         end = endOffset;
         posNum = end - start;
         classes = new ArrayList<String>();
+        token = DataProcessing.getTotalWordSet();
         try {
             executeWekaTutorial(); // 执行分类主函数
         } catch (Exception e) {
