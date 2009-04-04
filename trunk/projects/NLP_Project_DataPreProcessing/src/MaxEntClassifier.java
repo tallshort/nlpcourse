@@ -8,14 +8,11 @@ import java.util.regex.Pattern;
 
 public class MaxEntClassifier {
 
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         List<String> wordList = getWordList();
         int iteration = 100;
         int startOffset = -1;
-        int endOffset = 1;
+        int endOffset = 2;
 
         ArrayList<Double> accuarcyList = new ArrayList<Double>();
 
@@ -29,7 +26,7 @@ public class MaxEntClassifier {
                 String out = "out_" + postfix;
 
                 double maxAccuracy = -1;
-                out: for (double g = 0.5; g <= 10; g += 0.5) {
+                out: for (double g = 0.5; g <= 6; g += 0.5) {
                     Process p = Runtime.getRuntime().exec(
                             "maxent -i " + iteration + " -g " + g + " -m "
                                     + model + " -o " + out + " " + train + " "
@@ -38,11 +35,10 @@ public class MaxEntClassifier {
                             new InputStreamReader(p.getInputStream()));
 
                     String strProc = null;
+                    Pattern pattern = Pattern
+                        .compile("Accuracy:(.+)% [(](\\d+)/(\\d+)[)]");
                     while ((strProc = in.readLine()) != null) {
-                        Pattern pattern = Pattern
-                                .compile("Accuracy:(.+)% [(](\\d+)/(\\d+)[)]");
                         Matcher matcher = pattern.matcher(strProc);
-                        System.out.println(strProc);
                         if (matcher.find()) {
                             double accuracy = Double.parseDouble(matcher
                                     .group(1));

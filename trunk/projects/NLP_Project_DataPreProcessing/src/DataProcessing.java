@@ -14,8 +14,11 @@ import nu.xom.Elements;
 public class DataProcessing {
     
     private String separator = ",";
+    private String ignoreValue = "*";
     private boolean classLabelFirst = false;
     private boolean onefilePerItem = false;
+    private boolean includeToken = false;
+    private int includeTokenOffset = 1;
     
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
@@ -35,6 +38,9 @@ public class DataProcessing {
         ignoreWords.add("£©");
         ignoreWords.add("£¨");
         ignoreWords.add("£»");
+        ignoreWords.add("¡¢");
+        ignoreWords.add("¡¶");
+        ignoreWords.add("¡·");
     }
     
     public void process(String filePath, int startOffset, int endOffset) {
@@ -53,7 +59,7 @@ public class DataProcessing {
                 Elements instanceElements = lexeltElement.getChildElements("instance");
                 for (int i = 0; i < instanceElements.size(); i++) {
                     Element instanceElement = instanceElements.get(i);
-                    List<String> tokenList = getTokenList(instanceElement);
+                    List<TokenEntry> tokenEntryList = getTokenEntryList(instanceElement);
                     String instanceId = instanceElement.getAttributeValue("id");
                     // buffer.append(instanceId + separator);
                     Element postaggingElement = instanceElement.getFirstChildElement("postagging");
@@ -70,7 +76,7 @@ public class DataProcessing {
                         if (subwordElements.size() == 0) {
                             String token = wordElement.getFirstChildElement("token").getValue().trim();
                             if (token.equals(item) && currentPrefixContext.equals(prefixContext)) {
-                                printTokens(instanceId, instanceElement, tokenList, currentIndex, startOffset, endOffset);  
+                                printTokenEntrys(instanceId, instanceElement, tokenEntryList, currentIndex, startOffset, endOffset);  
                                 break;
                             }
                             currentIndex++;
@@ -80,7 +86,7 @@ public class DataProcessing {
                                 Element subwordElement = subwordElements.get(m);
                                 String token = subwordElement.getFirstChildElement("token").getValue().trim();
                                 if (token.equals(item) && currentPrefixContext.equals(prefixContext)) {
-                                    printTokens(instanceId, instanceElement, tokenList, currentIndex, startOffset, endOffset);   
+                                    printTokenEntrys(instanceId, instanceElement, tokenEntryList, currentIndex, startOffset, endOffset);   
                                     break;
                                 }
                                 currentIndex++;
@@ -106,9 +112,13 @@ public class DataProcessing {
         }
     }
     
-    private List<String> getTokenList(Element instanceElement) {
+//    private Set<String> getTrainWordSet() {
+//        Set<String> wordSet = new HashSet<String>()
+//    }
+    
+    private List<TokenEntry> getTokenEntryList(Element instanceElement) {
         Element postaggingElement = instanceElement.getFirstChildElement("postagging");
-        List<String> posList = new ArrayList<String>();
+        List<TokenEntry> tokenEntryList = new ArrayList<TokenEntry>();
         
         Elements wordElements = postaggingElement.getChildElements("word");
         for (int j = 0; j < wordElements.size(); j++) {
@@ -117,33 +127,43 @@ public class DataProcessing {
             if (subwordElements.size() == 0) {
                 String token = wordElement.getFirstChildElement("token").getValue().trim();
                 if (ignoreWords.contains(token)) {
-                    posList.add("*");
+                    tokenEntryList.add(new TokenEntry(ignoreValue, ignoreValue));
                 } else {
-                    posList.add(wordElement.getAttributeValue("pos"));
+                    tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), token));
                 }
             } else {
                 for (int m = 0; m < subwordElements.size(); m++) {
                     Element subwordElement = subwordElements.get(m);
                     String token = subwordElement.getFirstChildElement("token").getValue().trim();
                     if (ignoreWords.contains(token)) {
-                        posList.add("*");
+                        tokenEntryList.add(new TokenEntry(ignoreValue, ignoreValue));
                     } else {
-                        posList.add(subwordElement.getAttributeValue("pos"));
+                        tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), token));
                     }
                 }
             }
         }
-        return posList;
+        return tokenEntryList;
     }
     
-    private void printTokens(String instanceId, Element instanceElement, List<String> posList, int index, int startOffset, int endOffset) {
+    private void printTokenEntrys(String instanceId, Element instanceElement, List<TokenEntry> tokenEntryList, int index, int startOffset, int endOffset) {
         if (classLabelFirst) {
-            printToken(instanceId, instanceElement, posList, index, true);            
+            printToken(instanceId, instanceElement, tokenEntryList, true, index, true);            
         }
+        printTokenEntryItems(instanceId, instanceElement, tokenEntryList, true, index, startOffset, endOffset);
+        if (includeToken) {
+            printTokenEntryItems(instanceId, instanceElement, tokenEntryList, false, index, startOffset - includeTokenOffset, endOffset + includeTokenOffset);              
+        }
+        if (!classLabelFirst) {
+            printToken(instanceId, instanceElement, tokenEntryList, true, index, true);            
+        }
+    }
+    
+    private void printTokenEntryItems(String instanceId, Element instanceElement, List<TokenEntry> tokenEntryList, boolean printPos, int index, int startOffset, int endOffset) {
         int starIndex = -1;
         for (int i = -1; i >= startOffset; i--) {
-            if (index+i >= 0 && index+i < posList.size()) {
-                if (posList.get(index+i).equals("*")) {
+            if (index+i >= 0 && index+i < tokenEntryList.size()) {
+                if (tokenEntryList.get(index+i).getPos().equals(ignoreValue)) {
                     starIndex = index + i;
                     break;
                     
@@ -152,38 +172,35 @@ public class DataProcessing {
         }
         if (starIndex != -1) {
             for (int k = index + startOffset; k <= starIndex; k++) {
-                buffer.append("*" + separator);
+                buffer.append(ignoreValue + separator);
             }
             for (int k = starIndex + 1; k < index; k++) {
-                printToken(instanceId, instanceElement, posList, k, false);
+                printToken(instanceId, instanceElement, tokenEntryList, printPos, k, false);
             }
         } else {
             for (int k = index + startOffset; k < index; k++) {
-                printToken(instanceId, instanceElement, posList, k, false);
+                printToken(instanceId, instanceElement, tokenEntryList, printPos, k, false);
             }
         }
         
         int j = 0;
         for (j = 1; j <= endOffset; j++) {
-            if (index+j >= 0 && index+j < posList.size()) {
-                if (!posList.get(index+j).equals("*")) {
-                    printToken(instanceId, instanceElement, posList, index + j, false);
+            if (index+j >= 0 && index+j < tokenEntryList.size()) {
+                if (!tokenEntryList.get(index+j).getPos().equals(ignoreValue)) {
+                    printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                 } else {
                     break;
                 }
             } else {
-                buffer.append("*" + separator);
+                buffer.append(ignoreValue + separator);
             }
         }
         for (int k = j; k <= endOffset; k++) {
-            buffer.append("*" + separator);
-        }
-        if (!classLabelFirst) {
-            printToken(instanceId, instanceElement, posList, index, true);
+            buffer.append(ignoreValue + separator);
         }
     }
-    private void printToken(String instanceId, Element instanceElement, List<String> posList, int index, boolean target) {
-        if (index >= 0 && index < posList.size()) {    
+    private void printToken(String instanceId, Element instanceElement, List<TokenEntry> tokenEntryList, boolean printPos, int index, boolean target) {
+        if (index >= 0 && index < tokenEntryList.size()) {    
             if (target) {
                 Element answerElement = instanceElement.getFirstChildElement("answer");
                 String senseid = answerElement.getAttributeValue("senseid");
@@ -201,13 +218,18 @@ public class DataProcessing {
                     }
                 }
             } else {
-                String pos = posList.get(index);
-                buffer.append(pos + separator);               
+                if (printPos) {
+                    String pos = tokenEntryList.get(index).getPos();
+                    buffer.append(pos + separator); 
+                } else {
+                    String token = tokenEntryList.get(index).getToken();
+                    buffer.append(token + separator);
+                }
             }
             // String token = wordElement.getFirstChildElement("token").getValue().trim();
             // System.out.print(token + separator);
         } else {
-            buffer.append("*" + separator);
+            buffer.append(ignoreValue + separator);
         }
     }
     
@@ -246,4 +268,46 @@ public class DataProcessing {
         this.onefilePerItem = onefilePerItem;
     }
 
+    public boolean isIncludeToken() {
+        return includeToken;
+    }
+
+    public void setIncludeToken(boolean includeToken) {
+        this.includeToken = includeToken;
+    }
+
+    public int getIncludeTokenOffset() {
+        return includeTokenOffset;
+    }
+
+    public void setIncludeTokenOffset(int includeTokenOffset) {
+        this.includeTokenOffset = includeTokenOffset;
+    }
+
+}
+
+
+class TokenEntry {
+    
+    private String pos;
+    private String token;
+    
+    public TokenEntry(String pos, String token) {
+        this.pos = pos;
+        this.token = token;
+    }
+    
+    public String getPos() {
+        return pos;
+    }
+    public void setPos(String pos) {
+        this.pos = pos;
+    }
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
+    }
+    
 }
