@@ -22,8 +22,8 @@ public class Main {
 //                }
 //            }
 //        }
-        classify(-2, 3, "SMO");
-        compare(-2, 3, "SMO");
+        classify(-1, 2, "SMO");
+        compare(-1, 2, "SMO");
     }
 
     private static void classify(int startOffset, int endOffset,

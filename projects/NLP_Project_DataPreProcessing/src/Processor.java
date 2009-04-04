@@ -6,9 +6,9 @@ public class Processor {
     public static void main(String[] args) {     
         DataProcessing dp = new DataProcessing();
         // For maxent
-        dp.setClassLabelFirst(true);
-        dp.setSeparator(" ");
-        dp.setOnefilePerItem(true);
+//        dp.setClassLabelFirst(true);
+//        dp.setSeparator(" ");
+//        dp.setOnefilePerItem(true);
         dp.setIncludeToken(true);
 //        for (int i = -3; i <= 0; i++) {
 //            for (int j = 0; j <= 3; j++) {
@@ -18,8 +18,8 @@ public class Processor {
 //                }
 //            }
 //        }
-        // generateData(dp, -1, 2);
-        System.out.println(dp.getTotalWordSet());
+        generateData(dp, -1, 2);
+        // System.out.println(dp.getTotalWordSet());
     }
 
     /**
