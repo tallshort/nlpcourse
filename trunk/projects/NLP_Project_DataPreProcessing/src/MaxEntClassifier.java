@@ -13,13 +13,15 @@ public class MaxEntClassifier {
         int iteration = 100;
         int startOffset = -1;
         int endOffset = 2;
+        int includeTokenPreOffset = 1;
+        int includeTokenPostOffset = 3;
         double rightNum = 0; // 微平均 记录正确的个数
         double totalNum = 0; // 微平均 记录总共的个数
         ArrayList<Double> accuarcyList = new ArrayList<Double>();
 
         for (String word : wordList) {
             try {
-                String postfix = startOffset + "_" + endOffset + "_" + word
+                String postfix = startOffset + "_" + endOffset + "_" + includeTokenPreOffset + "_" + includeTokenPostOffset + "_" + word
                         + ".txt";
                 String train = "Chinese_train_pos.xml_" + postfix;
                 String test = "Chinese_test_pos.xml_" + postfix;
@@ -53,7 +55,7 @@ public class MaxEntClassifier {
                     in.close();
                 }
                 accuarcyList.add(maxAccuracy);
-                System.out.println(">>> " + maxAccuracy);
+                System.out.println(word + ": " + maxAccuracy);
             } catch (IOException e) {
                 e.printStackTrace();
             }

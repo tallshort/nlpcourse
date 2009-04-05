@@ -23,7 +23,7 @@ public class Main {
 //            }
 //        }
         //classify(-1, 1, "SMO");
-        compare(-1, 1, "SMO");
+        compare(-1, 1, 1,1, "SMO");
     }
 
     private static void classify(int startOffset, int endOffset,
@@ -83,10 +83,9 @@ public class Main {
         // model,String name)
     }
 
-    private static void compare(int startOffset, int endOffset, String modelName) {
+    private static void compare(int startOffset, int endOffset, int includeTokenPreOffset, int includeTokenPostOffset, String modelName) {
         File f1 = new File("ChineseLS.test.key");
-        File f2 = new File("result-" + modelName + startOffset + endOffset
-                + ".txt");
+        File f2 = new File("result-" + modelName + startOffset + endOffset + includeTokenPreOffset + includeTokenPostOffset + ".txt");
         try {
         	double right=0;//记录宏平均正确率
         	double rightNum=0; //对单个词的正确率
