@@ -6,10 +6,13 @@ public class Processor {
     public static void main(String[] args) {     
         DataProcessing dp = new DataProcessing();
         // For maxent
-//        dp.setClassLabelFirst(true);
-//        dp.setSeparator(" ");
-//        dp.setOnefilePerItem(true);
+        dp.setClassLabelFirst(true);
+        dp.setSeparator(" ");
+        dp.setOnefilePerItem(true);
+        dp.setIncludeTokenPreOffset(1);
+        dp.setIncludeTokenPostOffset(3);
         dp.setIncludeToken(true);
+        // dp.setTargetWord("³ö");
 //        for (int i = -3; i <= 0; i++) {
 //            for (int j = 0; j <= 3; j++) {
 //                // At least one tokens as the features
