@@ -14,9 +14,11 @@ public class MaxEntClassifier {
         int startOffset = -1;
         int endOffset = 2;
         int includeTokenPreOffset = 1;
-        int includeTokenPostOffset = 3;
-        double rightNum = 0; // 微平均 记录正确的个数
-        double totalNum = 0; // 微平均 记录总共的个数
+        int includeTokenPostOffset = 3; 
+        double rightNum = 0; // 微平均 记录特定词正确的个数
+        double totalNum = 0; // 微平均 记录特定词总共的个数 
+        double rightSum = 0; // 微平均 记录正确的个数
+        double totalSum = 0; // 微平均 记录总共的个数
         ArrayList<Double> accuarcyList = new ArrayList<Double>();
 
         for (String word : wordList) {
@@ -29,7 +31,7 @@ public class MaxEntClassifier {
                 String out = "out_" + postfix;
 
                 double maxAccuracy = -1;
-                out: for (double g = 0.5; g <= 6; g += 0.5) {
+                out: for (double g = 20; g <= 20; g += 0.2) {
                     Process p = Runtime.getRuntime().exec(
                             "maxent -i " + iteration + " -g " + g + " -m "
                                     + model + " -o " + out + " " + train + " "
@@ -45,15 +47,18 @@ public class MaxEntClassifier {
                         if (matcher.find()) {
                             double accuracy = Double.parseDouble(matcher
                                     .group(1));
-                            rightNum += Double.parseDouble(matcher.group(2));
-                            totalNum += Double.parseDouble(matcher.group(3));
+                            rightNum = Double.parseDouble(matcher.group(2));
+                            totalNum = Double.parseDouble(matcher.group(3));
                             if (accuracy > maxAccuracy) {
                                 maxAccuracy = accuracy;
                             }
+                            // System.out.println(strProc);
                         }
                     }
                     in.close();
                 }
+                rightSum += rightNum;
+                totalSum += totalNum;
                 accuarcyList.add(maxAccuracy);
                 System.out.println(word + ": " + maxAccuracy);
             } catch (IOException e) {
@@ -66,7 +71,8 @@ public class MaxEntClassifier {
             sum = sum + accuracy;
         }
         System.out.println("Macro average: " + sum / 40);
-        System.out.println("Micro average: " + rightNum / totalNum);
+        System.out.println("Right sum: " + rightSum + " " + "Total sum: " + totalSum);
+        System.out.println("Micro average: " + rightSum / totalSum);
     }
 
     private static List<String> getWordList() {

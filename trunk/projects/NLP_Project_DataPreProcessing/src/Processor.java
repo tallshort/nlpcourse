@@ -12,6 +12,7 @@ public class Processor {
         dp.setIncludeTokenPreOffset(1);
         dp.setIncludeTokenPostOffset(3);
         dp.setIncludeToken(true);
+        dp.setConsiderPunctuation(true);
         // dp.setTargetWord("³ö");
 //        for (int i = -3; i <= 0; i++) {
 //            for (int j = 0; j <= 3; j++) {
