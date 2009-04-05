@@ -25,24 +25,14 @@ public class DataProcessing {
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
     
-    private static Set<String> includePosSet;
+    private Set<String> includePosSet;
     
     private Set<String> totalWordSet;
     
-    static {
-        includePosSet = new HashSet<String>();
-        includePosSet.add("nr");
-        includePosSet.add("ns");
-        includePosSet.add("nt");
-        includePosSet.add("n");
-        includePosSet.add("nz");
-        includePosSet.add("v");
-        includePosSet.add("vd");
-        includePosSet.add("vn");
-    }
-    
     public DataProcessing() {
         expectedSenseMap = getExpectedSenseMap();
+        includePosSet = new HashSet<String>();
+        // includePosSet.add("vn");
         
         totalWordSet = this.getTotalWordSet();
     }
@@ -118,7 +108,7 @@ public class DataProcessing {
                 if (includeToken) {
                     TextFile.write(filePath + "_" + startOffset + "_" + endOffset + "_" + includeTokenPreOffset + "_" + includeTokenPostOffset + ".txt", buffer.toString());
                 } else {
-                    TextFile.write(filePath + "_" + startOffset + "_" + endOffset + "_" + ".txt", buffer.toString()); 
+                    TextFile.write(filePath + "_" + startOffset + "_" + endOffset + ".txt", buffer.toString()); 
                 }
             }
         } catch (Exception e) {
@@ -137,7 +127,7 @@ public class DataProcessing {
             if (subwordElements.size() == 0) {
                 String token = wordElement.getFirstChildElement("token").getValue().trim();
                 if (wordElement.getAttributeValue("pos").equals("w")) {
-                    tokenEntryList.add(new TokenEntry("w", token));
+                    tokenEntryList.add(new TokenEntry(ignoreValue, ignoreValue));
                 } else {
                     if (totalWordSet.contains(token)) {
                         tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), token));
@@ -150,7 +140,7 @@ public class DataProcessing {
                     Element subwordElement = subwordElements.get(m);
                     String token = subwordElement.getFirstChildElement("token").getValue().trim();
                     if (subwordElement.getAttributeValue("pos").equals("w")) {
-                        tokenEntryList.add(new TokenEntry("w", token));
+                        tokenEntryList.add(new TokenEntry(ignoreValue, ignoreValue));
                     } else {
                         if (totalWordSet.contains(token)) {
                             tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), token));
@@ -178,21 +168,21 @@ public class DataProcessing {
     }
     
     private void printTokenEntryItems(String instanceId, Element instanceElement, List<TokenEntry> tokenEntryList, boolean printPos, int index, int startOffset, int endOffset) {
-        int punctuationIndex = -1;
+        int starIndex = -1;
         for (int i = -1; i >= startOffset; i--) {
             if (index+i >= 0 && index+i < tokenEntryList.size()) {
-                if (tokenEntryList.get(index+i).getPos().equals("w")) {
-                    punctuationIndex = index + i;
+                if (tokenEntryList.get(index+i).getPos().equals(ignoreValue)) {
+                    starIndex = index + i;
                     break;
                     
                 }
             }
         }
-        if (punctuationIndex != -1) {
-            for (int k = index + startOffset; k < punctuationIndex; k++) {
+        if (starIndex != -1) {
+            for (int k = index + startOffset; k <= starIndex; k++) {
                 buffer.append(ignoreValue + separator);
             }
-            for (int k = punctuationIndex; k < index; k++) {
+            for (int k = starIndex + 1; k < index; k++) {
                 printToken(instanceId, instanceElement, tokenEntryList, printPos, k, false);
             }
         } else {
@@ -204,17 +194,16 @@ public class DataProcessing {
         int j = 0;
         for (j = 1; j <= endOffset; j++) {
             if (index+j >= 0 && index+j < tokenEntryList.size()) {
-                if (!tokenEntryList.get(index+j).getPos().equals("w")) {
+                if (!tokenEntryList.get(index+j).getPos().equals(ignoreValue)) {
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                 } else {
-                    printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                     break;
                 }
             } else {
                 buffer.append(ignoreValue + separator);
             }
         }
-        for (int k = j + 1; k <= endOffset; k++) {
+        for (int k = j; k <= endOffset; k++) {
             buffer.append(ignoreValue + separator);
         }
     }
@@ -331,16 +320,12 @@ public class DataProcessing {
                         Elements subwordElements = wordElement.getChildElements("subword");
                         if (subwordElements.size() == 0) {
                             String token = wordElement.getFirstChildElement("token").getValue().trim();
-                            // if (includePosSet.contains(wordElement.getAttributeValue("pos"))) {
-                                wordSet.add(token);
-                            // }      
+                            wordSet.add(token);
                         } else {
                             for (int m = 0; m < subwordElements.size(); m++) {
                                 Element subwordElement = subwordElements.get(m);
                                 String token = subwordElement.getFirstChildElement("token").getValue().trim();
-                                // if (includePosSet.contains(subwordElement.getAttributeValue("pos"))) {
-                                    wordSet.add(token);
-                                // }
+                                wordSet.add(token);
                             }
                         }
 
@@ -350,7 +335,6 @@ public class DataProcessing {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(wordSet);
         return wordSet;
     }
 
