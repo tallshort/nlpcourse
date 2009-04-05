@@ -21,6 +21,7 @@ public class DataProcessing {
     private int includeTokenPreOffset = 1;
     private int includeTokenPostOffset = 4;
     private String targetWord = "";
+    private boolean considerPunctuation = true;
     
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
@@ -179,12 +180,13 @@ public class DataProcessing {
     
     private void printTokenEntryItems(String instanceId, Element instanceElement, List<TokenEntry> tokenEntryList, boolean printPos, int index, int startOffset, int endOffset) {
         int punctuationIndex = -1;
-        for (int i = -1; i >= startOffset; i--) {
-            if (index+i >= 0 && index+i < tokenEntryList.size()) {
-                if (tokenEntryList.get(index+i).getPos().equals("w")) {
-                    punctuationIndex = index + i;
-                    break;
-                    
+        if (considerPunctuation) {
+            for (int i = -1; i >= startOffset; i--) {
+                if (index+i >= 0 && index+i < tokenEntryList.size()) {
+                    if (tokenEntryList.get(index+i).getPos().equals("w")) {
+                        punctuationIndex = index + i;
+                        break; 
+                    }
                 }
             }
         }
@@ -204,7 +206,8 @@ public class DataProcessing {
         int j = 0;
         for (j = 1; j <= endOffset; j++) {
             if (index+j >= 0 && index+j < tokenEntryList.size()) {
-                if (!tokenEntryList.get(index+j).getPos().equals("w")) {
+                if (!tokenEntryList.get(index+j).getPos().equals("w")
+                        || !considerPunctuation) {
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                 } else {
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
@@ -360,6 +363,14 @@ public class DataProcessing {
 
     public void setTargetWord(String targetWord) {
         this.targetWord = targetWord;
+    }
+
+    public boolean isConsiderPunctuation() {
+        return considerPunctuation;
+    }
+
+    public void setConsiderPunctuation(boolean considerPunctuation) {
+        this.considerPunctuation = considerPunctuation;
     }
 
 }
