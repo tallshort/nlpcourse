@@ -22,13 +22,14 @@ public class Main {
 //                }
 //            }
 //        }
-        classify(-1, 2, "SMO");
-        compare(-1, 2, "SMO");
+        //classify(-1, 1, "SMO");
+        compare(-1, 1, "SMO");
     }
 
     private static void classify(int startOffset, int endOffset,
             String algorithm) {
         // TODO Auto-generated method stub
+
         Reader r = new Reader("Chinese_train_pos.xml"); // 此类作用是返回一个HASHMAP
         // 记录
         // 下所有词和其出现的序号
@@ -87,33 +88,55 @@ public class Main {
         File f2 = new File("result-" + modelName + startOffset + endOffset
                 + ".txt");
         try {
+        	double right=0;//记录宏平均正确率
+        	double rightNum=0; //对单个词的正确率
+        	double totalNum=0; //单个词的样本总数
+        	String lastWord="";//记录上个单词
             int count = 0; // 记录总结果个数
             int equal = 0;
             BufferedReader br1 = new BufferedReader(new FileReader(f1));
             BufferedReader br2 = new BufferedReader(new FileReader(f2));
             String s1 = br1.readLine();
             String s2 = br2.readLine();
+            lastWord=s1.substring(0, s1.indexOf(" "));
             int cc = 0;
             while (s1 != null) {
-                if (s1.equals(s2)) {
-                    equal++;
-                    count++;
-                    // System.out.println(s1+"\t"+s2);
-                    // System.out.println("处理第"+count+"个结果...相等");
-
-                } else {
-                    count++;
-                    // System.out.println("处理第"+count+"个结果...不相等");
-                    // System.out.println(s1+"\t"+s2);
-                    // Thread.sleep(300);
-                }
-                // System.out.println("处理第"+count+"个结果...");
+            	if(lastWord.equals(s1.subSequence(0, s1.indexOf(" ")))) //是同一个词
+            	{
+            		totalNum++;
+            		if (s1.equals(s2)) {
+                        equal++;
+                        count++;
+                        rightNum++;
+                    } else {
+                        count++;
+                    }
+            	}
+            	else
+            	{
+            		double temp=rightNum/totalNum;
+            		System.out.println(lastWord+"  正确率："+temp);
+            		right += temp;
+            		totalNum=1; //下个词的总数 清 0
+            		lastWord=s1.substring(0, s1.indexOf(" ")); //记录当前词
+            		rightNum=0;
+	                if (s1.equals(s2)) {
+	                    equal++;
+	                    count++;
+	                    rightNum++;
+	                } else {
+	                    count++;
+	                }
+	              
+            	}
                 s1 = br1.readLine();
                 s2 = br2.readLine();
             }
             double x = (double) equal / count;
+            System.out.println(lastWord+"  正确率："+rightNum/totalNum);
+            right +=rightNum/totalNum;
             System.out.println("模型：" + modelName + " 范围：" + startOffset
-                    + endOffset + "正确率为：" + x);
+                    + endOffset + "\n微平均正确率为：" + x+"\n宏平均正确率为:"+right/40);
         } catch (Exception e) {
             e.printStackTrace();
         }

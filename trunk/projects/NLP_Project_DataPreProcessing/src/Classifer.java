@@ -257,7 +257,8 @@ public class Classifer {
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 System.out.println(s[i]);
-                throw e;
+                instance.setValue(i,"*");
+                //throw e;
             }
         }
         return instance;
