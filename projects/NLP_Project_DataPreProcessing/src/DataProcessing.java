@@ -22,6 +22,7 @@ public class DataProcessing {
     private int includeTokenPostOffset = 4;
     private String targetWord = "";
     private boolean considerPunctuation = true;
+    private boolean includeIgnoreValue = true;
     
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
@@ -191,8 +192,10 @@ public class DataProcessing {
             }
         }
         if (punctuationIndex != -1) {
-            for (int k = index + startOffset; k < punctuationIndex; k++) {
-                buffer.append(ignoreValue + separator);
+            if (includeIgnoreValue) {
+                for (int k = index + startOffset; k < punctuationIndex; k++) {
+                    buffer.append(ignoreValue + separator);
+                }
             }
             for (int k = punctuationIndex; k < index; k++) {
                 printToken(instanceId, instanceElement, tokenEntryList, printPos, k, false);
@@ -213,12 +216,14 @@ public class DataProcessing {
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                     break;
                 }
-            } else {
+            } else if (includeIgnoreValue) {
                 buffer.append(ignoreValue + separator);
             }
         }
-        for (int k = j + 1; k <= endOffset; k++) {
-            buffer.append(ignoreValue + separator);
+        if (includeIgnoreValue) {
+            for (int k = j + 1; k <= endOffset; k++) {
+                buffer.append(ignoreValue + separator);
+            }
         }
     }
     private void printToken(String instanceId, Element instanceElement, List<TokenEntry> tokenEntryList, boolean printPos, int index, boolean target) {
@@ -250,7 +255,7 @@ public class DataProcessing {
             }
             // String token = wordElement.getFirstChildElement("token").getValue().trim();
             // System.out.print(token + separator);
-        } else {
+        } else if (includeIgnoreValue) {
             buffer.append(ignoreValue + separator);
         }
     }
@@ -371,6 +376,22 @@ public class DataProcessing {
 
     public void setConsiderPunctuation(boolean considerPunctuation) {
         this.considerPunctuation = considerPunctuation;
+    }
+
+    public String getIgnoreValue() {
+        return ignoreValue;
+    }
+
+    public void setIgnoreValue(String ignoreValue) {
+        this.ignoreValue = ignoreValue;
+    }
+
+    public boolean isIncludeIgnoreValue() {
+        return includeIgnoreValue;
+    }
+
+    public void setIncludeIgnoreValue(boolean includeIgnoreValue) {
+        this.includeIgnoreValue = includeIgnoreValue;
     }
 
 }

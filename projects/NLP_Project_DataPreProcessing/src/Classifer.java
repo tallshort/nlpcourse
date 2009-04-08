@@ -204,7 +204,7 @@ public class Classifer {
         for (int i = 0; i < posNum; i++) { //添加词性的 Attribute
             allAttributes.addElement(new Attribute(String.valueOf(i), Vector));
         }
-        FastVector tokenVector=new FastVector(token.size()); //产生token 大小的FastVector
+        FastVector tokenVector=new FastVector(token.size() + 1); //产生token 大小的FastVector
         for(String s : token)
         {
         	tokenVector.addElement(s);
