@@ -7,14 +7,50 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MaxEntClassifier {
+    
+    private double globalRightNum;
+    private double globalTotalSum;
+    private ArrayList<Double> globalAccuarcyList = new ArrayList<Double>();
 
     public static void main(String[] args) {
-        List<String> wordList = getWordList();
-        int iteration = 100;
         int startOffset = -1;
         int endOffset = 2;
         int includeTokenPreOffset = 1;
-        int includeTokenPostOffset = 3; 
+        int includeTokenPostOffset = 3;
+        
+        MaxEntClassifier c = new MaxEntClassifier();
+        // Verbs
+        List<String> wordList = getVerbWordList();
+        c.runMaxEnt(wordList, startOffset, endOffset, includeTokenPreOffset,
+                includeTokenPostOffset);
+        // Nouns
+        wordList = getNounWordList();
+        startOffset = -1;
+        endOffset = 1;
+        includeTokenPreOffset = 1;
+        includeTokenPostOffset = 2;
+        c.runMaxEnt(wordList, startOffset, endOffset, includeTokenPreOffset,
+                includeTokenPostOffset);
+        
+        c.summarize(startOffset, endOffset, includeTokenPreOffset, includeTokenPostOffset);
+    }
+    
+    private void summarize(int startOffset, int endOffset, int includeTokenPreOffset, int includeTokenPostOffset) {
+        System.out.println("==============================================");
+        System.out.println("Feature: " + startOffset + endOffset + includeTokenPreOffset + includeTokenPostOffset);
+        double sum = 0;
+        for (Double accuracy : this.globalAccuarcyList) {
+            sum = sum + accuracy;
+        }
+        System.out.println("Global macro average: " + sum / globalAccuarcyList.size());
+        System.out.println("Global right sum: " + this.globalRightNum + " " + "Global total sum: " + this.globalTotalSum);
+        System.out.println("Global micro average: " + this.globalRightNum / this.globalTotalSum);
+        System.out.println("==============================================");
+    }
+
+    private void runMaxEnt(List<String> wordList, int startOffset,
+            int endOffset, int includeTokenPreOffset, int includeTokenPostOffset) {
+        int iteration = 100;
         double rightNum = 0; // 微平均 记录特定词正确的个数
         double totalNum = 0; // 微平均 记录特定词总共的个数 
         double rightSum = 0; // 微平均 记录正确的个数
@@ -31,7 +67,7 @@ public class MaxEntClassifier {
                 String out = "out_" + postfix;
 
                 double maxAccuracy = -1;
-                out: for (double g = 20; g <= 20; g += 0.2) {
+                out: for (double g = 20; g <= 20; g += 1) {
                     Process p = Runtime.getRuntime().exec(
                             "maxent -i " + iteration + " -g " + g + " -m "
                                     + model + " -o " + out + " " + train + " "
@@ -58,8 +94,11 @@ public class MaxEntClassifier {
                     in.close();
                 }
                 rightSum += rightNum;
+                this.globalRightNum += rightNum;
                 totalSum += totalNum;
+                this.globalTotalSum += totalNum;
                 accuarcyList.add(maxAccuracy);
+                this.globalAccuarcyList.add(maxAccuracy);
                 System.out.println(word + ": " + maxAccuracy);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -70,53 +109,61 @@ public class MaxEntClassifier {
         for (Double accuracy : accuarcyList) {
             sum = sum + accuracy;
         }
-        System.out.println("Macro average: " + sum / 40);
+        System.out.println("==============================================");
+        System.out.println("Feature: " + startOffset + endOffset + includeTokenPreOffset + includeTokenPostOffset);
+        System.out.println("Macro average: " + sum / wordList.size());
         System.out.println("Right sum: " + rightSum + " " + "Total sum: " + totalSum);
         System.out.println("Micro average: " + rightSum / totalSum);
+        System.out.println("==============================================");
     }
-
-    private static List<String> getWordList() {
+    
+    private static List<String> getVerbWordList() {
         List<String> wordList = new ArrayList<String>();
-        wordList.add("中医");
-        wordList.add("使");
-        wordList.add("儿女");
+        wordList.add("补");
+        wordList.add("成立");
+        wordList.add("吃");
         wordList.add("出");
+        wordList.add("带");
         wordList.add("动");
         wordList.add("动摇");
-        wordList.add("单位");
         wordList.add("发");
+        wordList.add("赶");
         wordList.add("叫");
-        wordList.add("吃");
-        wordList.add("天地");
-        wordList.add("带");
-        wordList.add("平息");
+        wordList.add("进");
         wordList.add("开通");
-        wordList.add("想");
-        wordList.add("成立");
+        wordList.add("看");
+        wordList.add("平息");
+        wordList.add("使");
+        wordList.add("说明");
         wordList.add("挑");
         wordList.add("推翻");
-        wordList.add("旗帜");
-        wordList.add("日子");
         wordList.add("望");
+        wordList.add("想");
+        wordList.add("震惊");
+        return wordList;
+    }
+    
+    private static List<String> getNounWordList() {
+        List<String> wordList = new ArrayList<String>();
         wordList.add("本");
+        wordList.add("表面");
+        wordList.add("菜");
+        wordList.add("长城");
+        wordList.add("单位");
+        wordList.add("道");
+        wordList.add("队伍");
+        wordList.add("儿女");
         wordList.add("机组");
+        wordList.add("镜头");
+        wordList.add("面");
+        wordList.add("牌子");
+        wordList.add("旗帜");
         wordList.add("气息");
         wordList.add("气象");
-        wordList.add("牌子");
-        wordList.add("看");
+        wordList.add("日子");
+        wordList.add("天地");
         wordList.add("眼光");
-        wordList.add("菜");
-        wordList.add("补");
-        wordList.add("表面");
-        wordList.add("说明");
-        wordList.add("赶");
-        wordList.add("进");
-        wordList.add("道");
-        wordList.add("镜头");
-        wordList.add("长城");
-        wordList.add("队伍");
-        wordList.add("震惊");
-        wordList.add("面");
+        wordList.add("中医");
         return wordList;
     }
 
