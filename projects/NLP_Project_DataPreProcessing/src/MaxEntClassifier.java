@@ -32,12 +32,11 @@ public class MaxEntClassifier {
         c.runMaxEnt(wordList, startOffset, endOffset, includeTokenPreOffset,
                 includeTokenPostOffset);
         
-        c.summarize(startOffset, endOffset, includeTokenPreOffset, includeTokenPostOffset);
+        c.summarize();
     }
     
-    private void summarize(int startOffset, int endOffset, int includeTokenPreOffset, int includeTokenPostOffset) {
+    private void summarize() {
         System.out.println("==============================================");
-        System.out.println("Feature: " + startOffset + endOffset + includeTokenPreOffset + includeTokenPostOffset);
         double sum = 0;
         for (Double accuracy : this.globalAccuarcyList) {
             sum = sum + accuracy;
