@@ -23,24 +23,52 @@ public class DataProcessing {
     private String targetWord = "";
     private boolean considerPunctuation = true;
     private boolean includeIgnoreValue = true;
+    private boolean emphasizeNeighborhood = false;
     
     private Map<String, String> expectedSenseMap;
     private StringBuilder buffer;
     
-    private static Set<String> includePosSet;
+    private static Set<String> excludePosSet;
     
     private Set<String> totalWordSet;
     
     static {
-        includePosSet = new HashSet<String>();
-        includePosSet.add("nr");
-        includePosSet.add("ns");
-        includePosSet.add("nt");
-        includePosSet.add("n");
-        includePosSet.add("nz");
-        includePosSet.add("v");
-        includePosSet.add("vd");
-        includePosSet.add("vn");
+        excludePosSet = new HashSet<String>();
+//        excludePosSet.add("x");
+//        excludePosSet.add("y");
+//        excludePosSet.add("z");
+//        excludePosSet.add("m");
+//        excludePosSet.add("f");
+//        
+//        excludePosSet.add("vi?");
+//        excludePosSet.add("ap");
+//        excludePosSet.add("ys");
+//        excludePosSet.add("bz");
+//        excludePosSet.add("d1");
+//        excludePosSet.add("az");
+//        excludePosSet.add("Ug");
+//        excludePosSet.add("ne");
+//        excludePosSet.add("d2");
+//        excludePosSet.add("nap");
+//        excludePosSet.add("nh");
+//        excludePosSet.add("nf");
+//        excludePosSet.add("o");
+//        excludePosSet.add("h");
+//        excludePosSet.add("Dg");
+//        excludePosSet.add("vd");
+//        excludePosSet.add("Tg");
+//        excludePosSet.add("nx");
+//        excludePosSet.add("Ag");
+//        excludePosSet.add("an");
+//        excludePosSet.add("k");
+//        excludePosSet.add("nt");
+//        excludePosSet.add("Vg");
+//        excludePosSet.add("z");
+//        excludePosSet.add("na");
+//        excludePosSet.add("nz");
+//        excludePosSet.add("ad");
+//        excludePosSet.add("s");
+//        excludePosSet.add("l");
     }
     
     public DataProcessing() {
@@ -211,8 +239,14 @@ public class DataProcessing {
             if (index+j >= 0 && index+j < tokenEntryList.size()) {
                 if (!tokenEntryList.get(index+j).getPos().equals("w")
                         || !considerPunctuation) {
+                    if (this.emphasizeNeighborhood && j == 1) {
+                        printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
+                    }
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                 } else {
+                    if (this.emphasizeNeighborhood && j == 1) {
+                        printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
+                    }                    
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                     break;
                 }
@@ -339,16 +373,16 @@ public class DataProcessing {
                         Elements subwordElements = wordElement.getChildElements("subword");
                         if (subwordElements.size() == 0) {
                             String token = wordElement.getFirstChildElement("token").getValue().trim();
-                            // if (includePosSet.contains(wordElement.getAttributeValue("pos"))) {
+                            if (!excludePosSet.contains(wordElement.getAttributeValue("pos"))) {
                                 wordSet.add(token);
-                            // }      
+                            }      
                         } else {
                             for (int m = 0; m < subwordElements.size(); m++) {
                                 Element subwordElement = subwordElements.get(m);
                                 String token = subwordElement.getFirstChildElement("token").getValue().trim();
-                                // if (includePosSet.contains(subwordElement.getAttributeValue("pos"))) {
+                                if (!excludePosSet.contains(subwordElement.getAttributeValue("pos"))) {
                                     wordSet.add(token);
-                                // }
+                                }
                             }
                         }
 
@@ -392,6 +426,14 @@ public class DataProcessing {
 
     public void setIncludeIgnoreValue(boolean includeIgnoreValue) {
         this.includeIgnoreValue = includeIgnoreValue;
+    }
+
+    public boolean isEmphasizeNeighborhood() {
+        return emphasizeNeighborhood;
+    }
+
+    public void setEmphasizeNeighborhood(boolean emphasizeNeighborhood) {
+        this.emphasizeNeighborhood = emphasizeNeighborhood;
     }
 
 }
