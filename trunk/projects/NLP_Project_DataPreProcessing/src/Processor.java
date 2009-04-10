@@ -10,11 +10,11 @@ public class Processor {
         dp.setSeparator(" ");
         dp.setOnefilePerItem(true);
         dp.setIncludeTokenPreOffset(1);
-        dp.setIncludeTokenPostOffset(2);
+        dp.setIncludeTokenPostOffset(3);
         dp.setIncludeToken(true);
         dp.setConsiderPunctuation(true);
         dp.setIncludeIgnoreValue(true);
-        dp.setEmphasizeNeighborhood(false);
+        dp.setEmphasizeNeighborhoodToken(false);
         // dp.setTargetWord("³ö");
         
 //        for (int tokenPreOffset = 1; tokenPreOffset <= 3; tokenPreOffset++) {
@@ -36,7 +36,7 @@ public class Processor {
 ////                generateData(dp, -1, 3);
 //            }
 //        }
-        generateData(dp, -1, 1);
+        generateData(dp, -1, 2);
         // System.out.println(dp.getTotalWordSet());
     }
 
