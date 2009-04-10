@@ -32,49 +32,53 @@ public class DataProcessing {
     
     private Set<String> totalWordSet;
     
+    private Set<String> missingWordSet;
+    
     static {
         excludePosSet = new HashSet<String>();
-//        excludePosSet.add("x");
-//        excludePosSet.add("y");
-//        excludePosSet.add("z");
-//        excludePosSet.add("m");
-//        excludePosSet.add("f");
-//        
-//        excludePosSet.add("vi?");
-//        excludePosSet.add("ap");
-//        excludePosSet.add("ys");
-//        excludePosSet.add("bz");
-//        excludePosSet.add("d1");
-//        excludePosSet.add("az");
-//        excludePosSet.add("Ug");
-//        excludePosSet.add("ne");
-//        excludePosSet.add("d2");
-//        excludePosSet.add("nap");
-//        excludePosSet.add("nh");
-//        excludePosSet.add("nf");
-//        excludePosSet.add("o");
-//        excludePosSet.add("h");
-//        excludePosSet.add("Dg");
-//        excludePosSet.add("vd");
-//        excludePosSet.add("Tg");
-//        excludePosSet.add("nx");
-//        excludePosSet.add("Ag");
-//        excludePosSet.add("an");
-//        excludePosSet.add("k");
-//        excludePosSet.add("nt");
-//        excludePosSet.add("Vg");
-//        excludePosSet.add("z");
-//        excludePosSet.add("na");
-//        excludePosSet.add("nz");
-//        excludePosSet.add("ad");
-//        excludePosSet.add("s");
-//        excludePosSet.add("l");
+        excludePosSet.add("x");
+        excludePosSet.add("y");
+        excludePosSet.add("z");
+        excludePosSet.add("m");
+        excludePosSet.add("f");
+        
+        excludePosSet.add("vi?");
+        excludePosSet.add("ap");
+        excludePosSet.add("ys");
+        excludePosSet.add("bz");
+        excludePosSet.add("d1");
+        excludePosSet.add("az");
+        excludePosSet.add("Ug");
+        excludePosSet.add("ne");
+        excludePosSet.add("d2");
+        excludePosSet.add("nap");
+        excludePosSet.add("nh");
+        excludePosSet.add("nf");
+        excludePosSet.add("o");
+        excludePosSet.add("h");
+        excludePosSet.add("Dg");
+        excludePosSet.add("vd");
+        excludePosSet.add("Tg");
+        excludePosSet.add("nx");
+        excludePosSet.add("Ag");
+        excludePosSet.add("an");
+        excludePosSet.add("k");
+        excludePosSet.add("nt");
+        excludePosSet.add("Vg");
+        excludePosSet.add("z");
+        excludePosSet.add("na");
+        excludePosSet.add("nz");
+        excludePosSet.add("ad");
+        excludePosSet.add("s");
+        excludePosSet.add("l");
     }
     
     public DataProcessing() {
         expectedSenseMap = getExpectedSenseMap();
         
         totalWordSet = this.getTotalWordSet();
+        
+        missingWordSet = new HashSet<String>();
     }
     
     public void process(String filePath, int startOffset, int endOffset) {
@@ -154,6 +158,7 @@ public class DataProcessing {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(missingWordSet);
     }
     
     private List<TokenEntry> getTokenEntryList(Element instanceElement) {
@@ -172,6 +177,7 @@ public class DataProcessing {
                     if (totalWordSet.contains(token)) {
                         tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), token));
                     } else {
+                        missingWordSet.add(token);
                         tokenEntryList.add(new TokenEntry(wordElement.getAttributeValue("pos"), ignoreValue));
                     }
                 }
@@ -185,6 +191,7 @@ public class DataProcessing {
                         if (totalWordSet.contains(token)) {
                             tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), token));
                         } else {
+                            missingWordSet.add(token);
                             tokenEntryList.add(new TokenEntry(subwordElement.getAttributeValue("pos"), ignoreValue));
                         }
                     }
@@ -239,12 +246,12 @@ public class DataProcessing {
             if (index+j >= 0 && index+j < tokenEntryList.size()) {
                 if (!tokenEntryList.get(index+j).getPos().equals("w")
                         || !considerPunctuation) {
-                    if (this.emphasizeNeighborhood && j == 1) {
+                    if (this.emphasizeNeighborhood && j == 1 && !printPos) {
                         printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                     }
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                 } else {
-                    if (this.emphasizeNeighborhood && j == 1) {
+                    if (this.emphasizeNeighborhood && j == 1 && !printPos) {
                         printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
                     }                    
                     printToken(instanceId, instanceElement, tokenEntryList, printPos, index + j, false);
@@ -432,7 +439,7 @@ public class DataProcessing {
         return emphasizeNeighborhood;
     }
 
-    public void setEmphasizeNeighborhood(boolean emphasizeNeighborhood) {
+    public void setEmphasizeNeighborhoodToken(boolean emphasizeNeighborhood) {
         this.emphasizeNeighborhood = emphasizeNeighborhood;
     }
 
