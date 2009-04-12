@@ -13,12 +13,14 @@ import weka.classifiers.functions.MultilayerPerceptron;
 import weka.classifiers.functions.RBFNetwork;
 import weka.classifiers.functions.SMO;
 import weka.classifiers.functions.supportVector.NormalizedPolyKernel;
+import weka.classifiers.functions.supportVector.PolyKernel;
 import weka.classifiers.functions.supportVector.Puk;
+import weka.classifiers.meta.AdaBoostM1;
+import weka.classifiers.trees.j48.C45PruneableClassifierTree;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.SelectedTag;
 
 public class Classifer {
     List<String> words; // 存放训练数据
@@ -30,10 +32,13 @@ public class Classifer {
     int posNum; //POS 个数
     int start;
     int end;
+    int includeTokenPreOffset;
+    int includeTokenPostOffset;
     HashSet<String> token;  //存放所有集合中的词
 
     public Classifer(List<String> wordList, List<String> testList,
-            String model, String name, int startOffset, int endOffset)// 每一个词的所有训练信息
+            String model, String name, int startOffset, int endOffset,
+            int includeTokenPreOffset, int includeTokenPostOffset)// 每一个词的所有训练信息
     {
         wordName = name;
         modelName = model;
@@ -41,9 +46,12 @@ public class Classifer {
         tests = testList;
         start = startOffset;
         end = endOffset;
+        this.includeTokenPreOffset = includeTokenPreOffset;
+        this.includeTokenPostOffset = includeTokenPostOffset;
         posNum = end - start;
         classes = new ArrayList<String>();
-        token = DataProcessing.getTotalWordSet();
+        //token = DataProcessing.getTotalWordSet();
+        token=new HashSet<String>();
         try {
             executeWekaTutorial(); // 执行分类主函数
         } catch (Exception e) {
@@ -57,6 +65,10 @@ public class Classifer {
         for (int i = 0; i < words.size(); i++) // 循环逐个加入样本
         {
             String[] temp = words.get(i).split(","); // 此数组为一个训练样本的各个属性值 如
+            for(int j=posNum;j<temp.length-1;j++)
+            {
+            	token.add(temp[j]);
+            }
             // {a,b,c,d,meaning}
             boolean flag = false; // 表示类别已存在
             for (int j = 0; j < classes.size(); j++) {
@@ -68,33 +80,55 @@ public class Classifer {
             if (!flag)
                 classes.add(temp[temp.length - 1]);
         }
+        for(int i=0;i<tests.size();i++)
+        {
+        	String[] temp=tests.get(i).split(",");
+        	for(int j=posNum;j<temp.length-1;j++)
+        	{
+        		token.add(temp[j]);
+        	}
+        }
     }
 
     public static Classifier classifierFactory(String a) {
         if (a.equals("SMO")) {
             SMO smo = new SMO();
-            NormalizedPolyKernel kernelPuk = new NormalizedPolyKernel();
-            Puk kernelP = new Puk();
-            smo.setKernel(kernelPuk);
-            smo.setC(1.4);
+           // NormalizedPolyKernel NPKernel = new NormalizedPolyKernel();
+            PolyKernel pk=new PolyKernel();
+            //Puk puk=new Puk();
+            smo.setKernel(pk);
+            smo.setC(0.73);
             return smo;
         } else if (a.equals("MP")) {
             MultilayerPerceptron mp = new MultilayerPerceptron();
             mp.setHiddenLayers("a");
             mp.setLearningRate(0.3);
-            mp.setMomentum(0.9);
+            mp.setMomentum(0.6);
             mp.setTrainingTime(500);
             return mp;
         } else if (a.equals("NaiveBayes")) {
             NaiveBayes nb = new NaiveBayes();
             return nb;
-        } else if (a.equals("LibSVM")) {
+        } else if (a.equals("AdaBoostM1")) {
             LibSVM ls = new LibSVM();
-            ls.setSVMType(new SelectedTag(LibSVM.SVMTYPE_C_SVC,
-                    LibSVM.TAGS_SVMTYPE));
-            ls.setKernelType(new SelectedTag(LibSVM.KERNELTYPE_RBF,
-                    LibSVM.TAGS_KERNELTYPE));
-            return ls;
+            AdaBoostM1 ab=new AdaBoostM1();
+            ab.setUseResampling(true);
+            NaiveBayes nb = new NaiveBayes();
+            ab.setClassifier(nb);
+//            String[] bb=ls.getOptions();
+//            for(String x : bb)
+//            {
+//            	System.out.println(x);
+//            }
+//            String[] b={"-K 1","-G 2"};
+//            try{
+//            ls.setOptions(b);
+//            }
+//            catch(Exception e)
+//            {
+//            }
+//            
+            return ab;
         } else {
             RBFNetwork rbf = new RBFNetwork();
             rbf.setNumClusters(3);
@@ -113,7 +147,6 @@ public class Classifer {
         // learningDataset);
         // System.out.println(evaluation.toSummaryString());
     }
-
     private Evaluation evaluatePredictiveModel(Classifier classifier,
             Instances learningDataset) throws Exception {
         Evaluation learningSetEvaluation = new Evaluation(learningDataset);
@@ -123,7 +156,7 @@ public class Classifer {
 
     private void predictUnknownCases(Instances learningDataset,
             Classifier predictiveModel) throws Exception {
-        File resultFile = new File("result-" + modelName + start + end + ".txt");
+        File resultFile = new File("result-" + modelName + start + end +"_"+includeTokenPreOffset+includeTokenPostOffset+".txt");
         // 注意：此为存放结果的目录，目录必须已经建好，而且该文件不能已经存在，（把前面测试过的文件更名）因为文件是用APPEND方式打开的。
         OutputStream os = new FileOutputStream(resultFile, true); // APPEND
         // MODEL
@@ -202,18 +235,27 @@ public class Classifer {
         Vector.addElement("na");
         Vector.addElement("nx");
         for (int i = 0; i < posNum; i++) { //添加词性的 Attribute
-            allAttributes.addElement(new Attribute(String.valueOf(i), Vector));
+        	Attribute posAttribute= new Attribute(String.valueOf(i), Vector);
+        	posAttribute.setWeight(0.5);
+            allAttributes.addElement(posAttribute);
         }
         FastVector tokenVector=new FastVector(token.size() + 1); //产生token 大小的FastVector
         for(String s : token)
         {
+        	//System.out.println(s);
         	tokenVector.addElement(s);
         	//tokenVector.addElement("*");
         }
-        tokenVector.addElement("*");
+        System.out.println("complete");
+        //tokenVector.addElement("*");
         for(int i=0;i<AttributeNum-posNum;i++)  //添加 token的 attribute
         {
-        	allAttributes.addElement(new Attribute(String.valueOf(i),tokenVector));
+        	double mid=(AttributeNum-posNum)/2;
+        	Attribute tokenAttribute =new Attribute(String.valueOf(i),tokenVector);
+        	double weight=((AttributeNum-posNum)-Math.abs(mid-i))/(AttributeNum-posNum);//越靠近中心越重要
+        	tokenAttribute.setWeight(weight);
+        	//System.out.println("getWeigth:"+tokenAttribute.weight());
+        	allAttributes.addElement(tokenAttribute);
         }
         FastVector result = new FastVector(l.size()); // 添加 预测属性
         for (int i = 0; i < l.size(); i++) {
@@ -232,8 +274,23 @@ public class Classifer {
         // System.out.println("instanceNum=" + instanceNum);
         Instances trainingDataSet = new Instances("Classifer", allAttributes,
                 instanceNum);
-
+        //Instances t=new Instances()
         trainingDataSet.setClassIndex(allAttributes.size() - 1); //
+//        trainingDataSet.attribute(0).setWeight(0.6);
+//        trainingDataSet.attribute(1).setWeight(1);
+//        trainingDataSet.attribute(2).setWeight(1);
+//        trainingDataSet.attribute(3).setWeight(5);
+//        trainingDataSet.attribute(4).setWeight(5);
+//        for(int i=0;i<trainingDataSet.numInstances();i++)
+//        {
+//          trainingDataSet.instance(i).setWeight(i);
+//        }
+//        for(int i= posNum ;i<AttributeNum-posNum;i++)  //添加 token的 attribute
+//        {
+//        	double mid=AttributeNum/2;
+//        	double weight=((AttributeNum-posNum)-Math.abs(mid-i))/(AttributeNum-posNum);//越靠近中心越重要
+//        	trainingDataSet.attribute(i).setWeight(weight);
+//        }
         for (int i = 0; i < words.size(); i++) // 循环逐个加入样本
         {
             String[] temp = words.get(i).split(","); // 此数组为一个训练样本的各个属性值 如
@@ -255,9 +312,9 @@ public class Classifer {
             try {
                 instance.setValue(i, s[i]);
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-                System.out.println(s[i]);
-                instance.setValue(i,"*");
+               // e.printStackTrace();
+//                System.out.println(s[i]);
+//                instance.setValue(i,"*");
                 //throw e;
             }
         }
