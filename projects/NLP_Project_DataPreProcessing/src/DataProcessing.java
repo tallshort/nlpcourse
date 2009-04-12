@@ -18,7 +18,7 @@ public class DataProcessing {
     private boolean classLabelFirst = false;
     private boolean onefilePerItem = false;
     private boolean includeToken = false;
-    private int includeTokenPreOffset = 1;
+    private int includeTokenPreOffset = -1;
     private int includeTokenPostOffset = 4;
     private String targetWord = "";
     private boolean considerPunctuation = true;
@@ -36,41 +36,41 @@ public class DataProcessing {
     
     static {
         excludePosSet = new HashSet<String>();
-        excludePosSet.add("x");
-        excludePosSet.add("y");
-        excludePosSet.add("z");
-        excludePosSet.add("m");
-        excludePosSet.add("f");
-        
-        excludePosSet.add("vi?");
-        excludePosSet.add("ap");
-        excludePosSet.add("ys");
-        excludePosSet.add("bz");
-        excludePosSet.add("d1");
-        excludePosSet.add("az");
-        excludePosSet.add("Ug");
-        excludePosSet.add("ne");
-        excludePosSet.add("d2");
-        excludePosSet.add("nap");
-        excludePosSet.add("nh");
-        excludePosSet.add("nf");
-        excludePosSet.add("o");
-        excludePosSet.add("h");
-        excludePosSet.add("Dg");
-        excludePosSet.add("vd");
-        excludePosSet.add("Tg");
-        excludePosSet.add("nx");
-        excludePosSet.add("Ag");
-        excludePosSet.add("an");
-        excludePosSet.add("k");
-        excludePosSet.add("nt");
-        excludePosSet.add("Vg");
-        excludePosSet.add("z");
-        excludePosSet.add("na");
-        excludePosSet.add("nz");
-        excludePosSet.add("ad");
-        excludePosSet.add("s");
-        excludePosSet.add("l");
+//        excludePosSet.add("x");
+//        excludePosSet.add("y");
+//        excludePosSet.add("z");
+//        excludePosSet.add("m");
+//        excludePosSet.add("f");
+//        
+//        excludePosSet.add("vi?");
+//        excludePosSet.add("ap");
+//        excludePosSet.add("ys");
+//        excludePosSet.add("bz");
+//        excludePosSet.add("d1");
+//        excludePosSet.add("az");
+//        excludePosSet.add("Ug");
+//        excludePosSet.add("ne");
+//        excludePosSet.add("d2");
+//        excludePosSet.add("nap");
+//        excludePosSet.add("nh");
+//        excludePosSet.add("nf");
+//        excludePosSet.add("o");
+//        excludePosSet.add("h");
+//        excludePosSet.add("Dg");
+//        excludePosSet.add("vd");
+//        excludePosSet.add("Tg");
+//        excludePosSet.add("nx");
+//        excludePosSet.add("Ag");
+//        excludePosSet.add("an");
+//        excludePosSet.add("k");
+//        excludePosSet.add("nt");
+//        excludePosSet.add("Vg");
+//        excludePosSet.add("z");
+//        excludePosSet.add("na");
+//        excludePosSet.add("nz");
+//        excludePosSet.add("ad");
+//        excludePosSet.add("s");
+//        excludePosSet.add("l");
     }
     
     public DataProcessing() {
@@ -81,6 +81,13 @@ public class DataProcessing {
         missingWordSet = new HashSet<String>();
     }
     
+    /**
+     * 按照给定的参数进行数据预处理
+     * 
+     * @param filePath XML数据文件
+     * @param startOffset 特征提取，相对于待消歧词的POS起始偏移量
+     * @param endOffset 特征提取，相对于待消歧词的POS结尾偏移量
+     */
     public void process(String filePath, int startOffset, int endOffset) {
         buffer = new StringBuilder();
         try {
@@ -158,7 +165,7 @@ public class DataProcessing {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(missingWordSet);
+        // System.out.println(missingWordSet);
     }
     
     private List<TokenEntry> getTokenEntryList(Element instanceElement) {
@@ -207,7 +214,7 @@ public class DataProcessing {
         }
         printTokenEntryItems(instanceId, instanceElement, tokenEntryList, true, index, startOffset, endOffset);
         if (includeToken) {
-            printTokenEntryItems(instanceId, instanceElement, tokenEntryList, false, index, startOffset - includeTokenPreOffset, endOffset + includeTokenPostOffset);              
+            printTokenEntryItems(instanceId, instanceElement, tokenEntryList, false, index, startOffset + includeTokenPreOffset, endOffset + includeTokenPostOffset);              
         }
         if (!classLabelFirst) {
             printToken(instanceId, instanceElement, tokenEntryList, true, index, true);            
@@ -316,6 +323,9 @@ public class DataProcessing {
         return separator;
     }
 
+    /**
+     * 设置分隔符，用于MaxEnt
+     */
     public void setSeparator(String separator) {
         this.separator = separator;
     }
@@ -324,6 +334,9 @@ public class DataProcessing {
         return classLabelFirst;
     }
 
+    /**
+     * 设置是否类标位于行首，用于MaxEnt
+     */
     public void setClassLabelFirst(boolean classLabelFirst) {
         this.classLabelFirst = classLabelFirst;
     }
@@ -332,6 +345,9 @@ public class DataProcessing {
         return onefilePerItem;
     }
 
+    /**
+     * 设置是否每个词单独一个数据文件，用于MaxEnt
+     */
     public void setOnefilePerItem(boolean onefilePerItem) {
         this.onefilePerItem = onefilePerItem;
     }
@@ -340,6 +356,9 @@ public class DataProcessing {
         return includeToken;
     }
 
+    /**
+     * 设置是否包含TOKEN作为特征
+     */
     public void setIncludeToken(boolean includeToken) {
         this.includeToken = includeToken;
     }
@@ -348,6 +367,9 @@ public class DataProcessing {
         return includeTokenPreOffset;
     }
 
+    /**
+     * 设置相对于POS起始偏移量的TOKEN起始偏移量
+     */
     public void setIncludeTokenPreOffset(int includeTokenPreOffset) {
         this.includeTokenPreOffset = includeTokenPreOffset;
     }
@@ -356,6 +378,9 @@ public class DataProcessing {
         return includeTokenPostOffset;
     }
 
+    /**
+     * 设置相对于POS起始偏移量的TOKEN结尾偏移量
+     */
     public void setIncludeTokenPostOffset(int includeTokenPostOffset) {
         this.includeTokenPostOffset = includeTokenPostOffset;
     }
@@ -415,6 +440,9 @@ public class DataProcessing {
         return considerPunctuation;
     }
 
+    /**
+     * 设置是否考虑标点优化
+     */
     public void setConsiderPunctuation(boolean considerPunctuation) {
         this.considerPunctuation = considerPunctuation;
     }
@@ -423,6 +451,9 @@ public class DataProcessing {
         return ignoreValue;
     }
 
+    /**
+     * 设置忽略值的字符串取值
+     */
     public void setIgnoreValue(String ignoreValue) {
         this.ignoreValue = ignoreValue;
     }
@@ -431,6 +462,9 @@ public class DataProcessing {
         return includeIgnoreValue;
     }
 
+    /**
+     * 设置是否将忽略值输出，用于MaxEnt
+     */
     public void setIncludeIgnoreValue(boolean includeIgnoreValue) {
         this.includeIgnoreValue = includeIgnoreValue;
     }
@@ -439,6 +473,9 @@ public class DataProcessing {
         return emphasizeNeighborhood;
     }
 
+    /**
+     * 设置是否通过复制强调待消歧词左右的TOKEN
+     */
     public void setEmphasizeNeighborhoodToken(boolean emphasizeNeighborhood) {
         this.emphasizeNeighborhood = emphasizeNeighborhood;
     }
