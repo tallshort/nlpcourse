@@ -15,7 +15,7 @@ import weps.util.TextFile;
 
 public class PorterStemStopWordAnalyzer extends Analyzer {
 
-    static final String[] stopWords
+    public static String[] stopWords
         = new TextFile("asset/stopwords.txt").toArray(new String[0]);
     
     @Override
