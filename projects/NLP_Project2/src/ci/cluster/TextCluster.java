@@ -1,5 +1,7 @@
 package ci.cluster;
 
+import java.util.List;
+
 import ci.textanalysis.TagMagnitudeVector;
 
 public interface TextCluster {
@@ -13,6 +15,8 @@ public interface TextCluster {
     public void computeCenter();
     
     public int getClusterId();
+    
+    public List<TextDataItem> getDataItems();
     
     public void addDataItem(TextDataItem item);
     

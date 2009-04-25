@@ -29,7 +29,7 @@ public class BlogCluster implements TextCluster {
         this.items.clear();
     }
     
-    public List<TextDataItem> getItems() {
+    public List<TextDataItem> getDataItems() {
         return this.items;
     }
 
