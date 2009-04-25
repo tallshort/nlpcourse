@@ -15,6 +15,11 @@ import org.apache.lucene.analysis.TokenStream;
 import org.junit.Test;
 
 import weps.AbstractBodyExtractor;
+import weps.test.mock.BlogCluster;
+import weps.test.mock.BlogDataSetCreator;
+import ci.cluster.TextCluster;
+import ci.cluster.TextDataItem;
+import ci.cluster.impl.TextKMeansClusterer;
 import ci.textanalysis.InverseDocFreqEstimator;
 import ci.textanalysis.Tag;
 import ci.textanalysis.TagCache;
@@ -132,5 +137,18 @@ public class UnitTest {
         TagMagnitudeVector tmvCombined = tmvTitle.add(tmvBody);
         // System.out.println(tmvCombined);
         assertTrue(tmvCombined.toString().contains("[users, user, 0.4364357804719848]"));
+    }
+    
+    @Test
+    public void testKMeansCluster() throws Exception {
+        List<TextDataItem> blogData = new BlogDataSetCreator().createLearningData();
+        TextKMeansClusterer clusterer = new TextKMeansClusterer(blogData, 2) {
+            @Override
+            protected TextCluster createTextCluster(int clusterId) {
+                return new BlogCluster(clusterId);
+            }
+        };
+        clusterer.cluster();
+        System.out.println(clusterer);
     }
 }
