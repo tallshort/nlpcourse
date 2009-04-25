@@ -1,18 +1,16 @@
-package weps.test.mock;
+package ci.cluster.impl;
 
-import weps.test.mock.BlogEntry;
 import ci.cluster.TextDataItem;
 import ci.textanalysis.TagMagnitudeVector;
 
-public class BlogDataItem implements TextDataItem {
+public class TextDataItemImpl implements TextDataItem {
 
     private TagMagnitudeVector tagMagnitudeVector;
     private Integer clusterId;
-    private BlogEntry blogEntry;
+    private Object data;
     
-    public BlogDataItem(BlogEntry blogEntry, 
-            TagMagnitudeVector tagMagnitudeVector) {
-        this.blogEntry = blogEntry;
+    public TextDataItemImpl(Object data, TagMagnitudeVector tagMagnitudeVector) {
+        this.data = data;
         this.tagMagnitudeVector = tagMagnitudeVector;
     }
     
@@ -25,7 +23,7 @@ public class BlogDataItem implements TextDataItem {
     }
 
     public Object getData() {
-        return this.blogEntry;
+        return this.data;
     }
 
     public TagMagnitudeVector getTagMagnitudeVector() {

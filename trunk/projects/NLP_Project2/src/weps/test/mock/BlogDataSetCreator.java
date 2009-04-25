@@ -6,6 +6,7 @@ import java.util.List;
 
 import ci.cluster.DataSetCreator;
 import ci.cluster.TextDataItem;
+import ci.cluster.impl.TextDataItemImpl;
 import ci.textanalysis.TagMagnitude;
 import ci.textanalysis.TagMagnitudeVector;
 import ci.textanalysis.TextAnalyzer;
@@ -26,15 +27,33 @@ public class BlogDataSetCreator implements DataSetCreator {
     public List<TextDataItem> createLearningData() throws Exception {
         List<TextDataItem> blogDataList = new ArrayList<TextDataItem>();
         TextDataItem blogItem = createBlogItem(
-                "SAP Gets Business Intelligence. What Do You Get?",
-                "Michael Goldberg in News",
+                "SAP Gets Business Intelligence.",
+                "SAP",
                 "SAP Gets Business Intelligence. What Do You Get?"
                 );
         blogDataList.add(blogItem);
+//        blogItem = createBlogItem(
+//                "SAP Gets Business Intelligence.",
+//                "SAP",
+//                "SAP Gets Business Intelligence. What Do You Get?"
+//                );
+//        blogDataList.add(blogItem);
+//        blogItem = createBlogItem(
+//                "SAP Gets Business Intelligence.",
+//                "SAP",
+//                "SAP Gets Business Intelligence. What Do You Get?"
+//                );
+//        blogDataList.add(blogItem);
+//        blogItem = createBlogItem(
+//                "SAP Gets Business Intelligence.",
+//                "SAP",
+//                "SAP Gets Business Intelligence. What Do You Get?"
+//                );
+//        blogDataList.add(blogItem);
         blogItem = createBlogItem(
                 "collective intelligence excites execs",
-                "Michael Goldberg in News",
-                "collective intelligence excites execs zdnet.com's dio hinchcliffe provides a tremendous post cov"
+                "SAP",
+                "collective intelligence excites execs zdnet.com's"
                 );
         blogDataList.add(blogItem);
         blogItem = createBlogItem(
@@ -58,7 +77,7 @@ public class BlogDataSetCreator implements DataSetCreator {
         for (TagMagnitude tm : tmv.getTagMagnitudes()) {
             this.freqEstimator.addCount(tm.getTag());
         }
-        return new BlogDataItem(blogEntry, tmv);
+        return new TextDataItemImpl(blogEntry, tmv);
     }
 
 }
