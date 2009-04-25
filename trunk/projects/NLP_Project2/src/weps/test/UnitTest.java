@@ -148,7 +148,8 @@ public class UnitTest {
                 return new BlogCluster(clusterId);
             }
         };
-        clusterer.cluster();
-        System.out.println(clusterer);
+        List<TextCluster> clusters = clusterer.cluster();
+        // System.out.println(clusterer);
+        assertTrue(clusters.get(0).getDataItems().size() == 2);
     }
 }

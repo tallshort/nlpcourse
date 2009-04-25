@@ -19,7 +19,7 @@ public class BlogDataSetCreator implements DataSetCreator {
     private TextAnalyzer textAnalyzer;
     
     public BlogDataSetCreator() {
-        this.freqEstimator = new SimpleInverseDocFreqEstimator(3);
+        this.freqEstimator = new SimpleInverseDocFreqEstimator(4);
         this.textAnalyzer = new LuceneTextAnalyzer(new TagCacheImpl(), freqEstimator);
     }
 
@@ -41,6 +41,11 @@ public class BlogDataSetCreator implements DataSetCreator {
                 "Corporate Social Networks",
                 "Social-networking",
                 "Corporate Social Networks Filed under: Collaboration");
+        blogDataList.add(blogItem);
+        blogItem = createBlogItem(
+                "Corporate Social Networks are coming",
+                "Social-networking",
+                "Corporate Social Networks are becoming more and more popular.");
         blogDataList.add(blogItem);
         return blogDataList;
     }
