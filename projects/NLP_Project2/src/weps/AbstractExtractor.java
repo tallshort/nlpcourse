@@ -9,7 +9,7 @@ public abstract class AbstractExtractor {
     private final static String DESCRIPTION_FILES_DIR = "description_files";
     private final static String WEBPAGES_DIR = "web_pages";
     
-    private String datasetDir = ".";
+    private String datasetDir = "weps2007/test";
     private String targetDir = ".";
     private String targetPerson = "";
     

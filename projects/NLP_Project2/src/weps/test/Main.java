@@ -9,7 +9,9 @@ import weps.PythonBodyExtractor;
 public class Main {
 
     public static void main(String[] args) {
-        testExtractor();
+        // testExtractor();
+        String str = "telehealth.net|";
+        System.out.println(str.split("[|]").length);
     }
 
     private static void testExtractor() {
