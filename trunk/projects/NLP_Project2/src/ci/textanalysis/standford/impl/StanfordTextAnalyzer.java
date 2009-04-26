@@ -1,23 +1,27 @@
-package weps;
+package ci.textanalysis.standford.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ci.textanalysis.Tag;
+import ci.textanalysis.TagMagnitudeVector;
+import ci.textanalysis.TextAnalyzer;
+import ci.textanalysis.lucene.impl.TagImpl;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 
-public class StandfordNamedEntityRecognizer implements INamedEntityRecognizer {
+public class StanfordTextAnalyzer implements TextAnalyzer {
 
-private CRFClassifier classifer;
+    private CRFClassifier classifer;
     
-    public StandfordNamedEntityRecognizer() 
+    public StanfordTextAnalyzer() 
         throws ClassCastException, IOException, ClassNotFoundException {
         this.classifer
             = CRFClassifier.getClassifier("asset/ner-eng-ie.crf-3-all2008-distsim.ser.gz");
     }
     
-    public List<String> recognizeNamedEntities(String text) {
-        List<String> entityNameList = new ArrayList<String>();
+    public List<Tag> analyzeText(String text) throws IOException {
+        List<Tag> tagList = new ArrayList<Tag>();
         String labeledText = this.classifer.classifyToString(text);
         String[] res = labeledText.split(" ");
         for (String s : res) {
@@ -27,12 +31,18 @@ private CRFClassifier classifer;
             if (p.equals("LOCATION") 
                     || p.equals("PERSON")
                     || p.equals("ORGANIZATION")) { // 如果被标记为命名实体
-                String entityName = s.substring(0, index);
-                entityNameList.add(entityName);
-                // System.out.println(s);
+                String tag = s.substring(0, index);
+                tagList.add(new TagImpl(tag, tag));
+                System.out.println(s);
             }
         }
-        return entityNameList;
+        return tagList;
+    }
+
+    public TagMagnitudeVector createTagMagnitudeVector(String text)
+            throws IOException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
