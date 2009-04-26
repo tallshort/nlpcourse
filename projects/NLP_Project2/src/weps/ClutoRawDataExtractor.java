@@ -12,30 +12,30 @@ public class ClutoRawDataExtractor extends AbstractExtractor {
     private INamedEntityRecognizer recognizer;
     private String bodyDir = "body_data";
     private String urlDir = "url_data";
-    
+
     public ClutoRawDataExtractor() throws Exception {
         recognizer = new StandfordNamedEntityRecognizer();
     }
-    
+
     @Override
     protected void extractContent(String filePath, String name, String rank) {
         String postfix = "/" + name + "_" + rank + ".txt";
-        String bodyFilePath = 
-            this.bodyDir  + postfix;
+        String bodyFilePath = this.bodyDir + postfix;
         String urlFilePath = this.urlDir + postfix;
+
+        List<String> namedEntities = recognizer.recognizeNamedEntities(TextFile
+                .read(bodyFilePath));
         try {
-            List<String> namedEntities
-                = recognizer.recognizeNamedEntities(TextFile.read(bodyFilePath));
             String urlData = TextFile.read(urlFilePath).trim();
             if (!urlData.equals("")) {
                 namedEntities.addAll(Arrays.asList(urlData.split("[|]")));
             }
-            System.out.println(namedEntities);
-            TextFile.write(this.getTargetDir() + postfix, 
-                    Join.join("|", namedEntities));
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(namedEntities);
+        TextFile.write(this.getTargetDir() + postfix, Join.join("|",
+                namedEntities));
     }
 
     public String getBodyDir() {
