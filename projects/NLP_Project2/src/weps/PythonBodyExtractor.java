@@ -3,7 +3,9 @@ package weps;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class PythonBodyExtractor extends AbstractBodyExtractor {
+import weps.util.TextFile;
+
+public class PythonBodyExtractor extends AbstractExtractor implements IBodyExtractor {
 
     private String pythonFilePath;
     private double density;
@@ -52,6 +54,13 @@ public class PythonBodyExtractor extends AbstractBodyExtractor {
             e.printStackTrace();
         }
         return result.trim();
+    }
+
+    @Override
+    protected void extractContent(String filePath, String name, String rank) {
+        String body = this.extractBody(filePath);
+        // System.out.println(body);
+        TextFile.write(this.getTargetDir() + "/" + name + "_" + rank + ".txt", body);
     }
 
 }

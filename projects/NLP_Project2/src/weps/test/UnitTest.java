@@ -14,7 +14,10 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.junit.Test;
 
-import weps.AbstractBodyExtractor;
+import weps.AbstractExtractor;
+import weps.INamedEntityRecognizer;
+import weps.MofoMicroformatsExtractor;
+import weps.StandfordNamedEntityRecognizer;
 import weps.test.mock.BlogCluster;
 import weps.test.mock.BlogDataSetCreator;
 import weps.test.mock.BlogHierCluster;
@@ -44,9 +47,10 @@ public class UnitTest {
 
     @Test
     public void testBodyExtractor() {
-        AbstractBodyExtractor extractor = new AbstractBodyExtractor() {
-            public String extractBody(String filePath) {
-                return null;
+        AbstractExtractor extractor = new AbstractExtractor() {
+            @Override
+            protected void extractContent(String absolutePath, String name,
+                    String rank) {
             }
         };
         extractor.setDatasetDir("weps2007/test");
@@ -173,5 +177,21 @@ public class UnitTest {
         List<TextCluster> clusters = clusterer.cluster();
         System.out.println("");
         System.out.println(clusterer);    
+    }
+    
+    @Test
+    public void testNamedEntityRecognizer() {
+        INamedEntityRecognizer recognizer = new StandfordNamedEntityRecognizer();
+        String text = "";
+        List<String> namedEntities = recognizer.recognizeNamedEntities(text);
+    }
+    
+    @Test
+    public void testMicroformatsExtractor() {
+        AbstractExtractor extractor
+        = new MofoMicroformatsExtractor("asset/microformats_extractor.rb");
+        extractor.setDatasetDir("weps2007/test");
+        extractor.setTargetDir("test_webpages_microformats");
+        extractor.extractContents();
     }
 }
