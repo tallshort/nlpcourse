@@ -4,15 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import weps.util.TextFile;
-
-public abstract class AbstractBodyExtractor implements IBodyExtractor {
+public abstract class AbstractExtractor {
     
     private final static String DESCRIPTION_FILES_DIR = "description_files";
     private final static String WEBPAGES_DIR = "web_pages";
     
     private String datasetDir = ".";
-    private String bodiesTargetDir = ".";
+    private String targetDir = ".";
     private String targetPerson = "";
     
     public List<String> getPeopleNameList() {
@@ -27,7 +25,7 @@ public abstract class AbstractBodyExtractor implements IBodyExtractor {
         return nameList;
     }
     
-    public void extractBodies() {
+    public void extractContents() {
         List<String> nameList = this.getPeopleNameList();
         for (String name : nameList) {
             if (!this.targetPerson.equals("") && !name.equals(this.targetPerson)) {
@@ -39,13 +37,14 @@ public abstract class AbstractBodyExtractor implements IBodyExtractor {
             for (String rank : dir.list()) {
                 File webPageFile = new File(webPagesDir + "/" + rank + "/index.html");
                 if (webPageFile.exists()) {
-                    String body = this.extractBody(webPageFile.getAbsolutePath());
-                    // System.out.println(body);
-                    TextFile.write(this.getBodiesTargetDir() + "/" + name + "_" + rank + ".txt", body);
+                    extractContent(webPageFile.getAbsolutePath(), name, rank);
                 }
             }
         }
     }
+
+    protected abstract void extractContent(String filePath, 
+            String name, String rank);
 
     public String getDatasetDir() {
         return datasetDir;
@@ -55,12 +54,12 @@ public abstract class AbstractBodyExtractor implements IBodyExtractor {
         this.datasetDir = datasetDir;
     }
 
-    public String getBodiesTargetDir() {
-        return bodiesTargetDir;
+    public String getTargetDir() {
+        return targetDir;
     }
 
-    public void setBodiesTargetDir(String bodiesTargetDir) {
-        this.bodiesTargetDir = bodiesTargetDir;
+    public void setTargetDir(String targetDir) {
+        this.targetDir = targetDir;
     }
 
     public String getTargetPerson() {
