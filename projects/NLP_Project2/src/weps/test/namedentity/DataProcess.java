@@ -31,10 +31,8 @@ public class DataProcess {
     public String Process() // 返回当前文件处理后的内容
     {
         String result = "";
-        String[] content = ReadFromFile().toString().split(" ");
+        String[] content = ReadFromFile().toString().split("[|]");
         for (String s : content) {
-            s = s.replaceAll(":", "").replaceAll("-", "").replaceAll(",", "")
-                    .replace("\"", "").replaceAll("&", "").replaceAll("!", "");
             if (!s.trim().equals("")) {
                 if (countMap.containsKey(s)) {
                     countMap.get(s).SetPlus(); // 若该单词已经在本文出现，则计数++
