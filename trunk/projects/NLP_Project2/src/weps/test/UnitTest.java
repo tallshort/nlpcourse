@@ -52,10 +52,10 @@ public class UnitTest {
                     String rank) {
             }
         };
-        extractor.setDatasetDir("weps2007/test");
+        extractor.setDatasetDir("D:/MLPROJECT2/weps2007/test");
         List<String> nameList = extractor.getPeopleNameList();
         assertEquals(30, nameList.size());
-        extractor.setDatasetDir("weps2007/training");
+        extractor.setDatasetDir("D:/MLPROJECT2/weps2007/training");
         nameList = extractor.getPeopleNameList();
         assertEquals(49, nameList.size());
     }
