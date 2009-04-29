@@ -6,8 +6,8 @@ import java.util.List;
 
 public abstract class AbstractExtractor {
     
-    private final static String DESCRIPTION_FILES_DIR = "description_files";
-    private final static String WEBPAGES_DIR = "web_pages";
+    protected final static String DESCRIPTION_FILES_DIR = "description_files";
+    protected final static String WEBPAGES_DIR = "web_pages";
     
     private String datasetDir = "D:/MLPROJECT2/weps2007/test";
     private String targetDir = ".";
@@ -25,10 +25,10 @@ public abstract class AbstractExtractor {
         return nameList;
     }
     
-    public void extractContents() {
+    public void extractContentsPerDoc() {
         List<String> nameList = this.getPeopleNameList();
         for (String name : nameList) {
-            if (!this.targetPerson.equals("") && !name.equals(this.targetPerson)) {
+            if (this.targetPerson.equals("") || !name.equals(this.targetPerson)) {
                 continue;
             }
             String webPagesDir
@@ -40,6 +40,16 @@ public abstract class AbstractExtractor {
                     extractContent(webPageFile.getAbsolutePath(), name, rank);
                 }
             }
+        }
+    }
+    
+    public void extractContentsPerName() {
+        List<String> nameList = this.getPeopleNameList();
+        for (String name : nameList) {
+            if (this.targetPerson.equals("") || !name.equals(this.targetPerson)) {
+                continue;
+            }
+            extractContent(null, name, null);
         }
     }
 

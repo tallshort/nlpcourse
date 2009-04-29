@@ -25,6 +25,6 @@ public class Main {
         System.out.println(nameList.size());
         extractor.setDatasetDir("fixture");
         extractor.setTargetDir("test_webpages_bodies");
-        extractor.extractContents();
+        extractor.extractContentsPerDoc();
     }
 }
