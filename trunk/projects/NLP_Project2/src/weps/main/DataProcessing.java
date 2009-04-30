@@ -10,15 +10,15 @@ import weps.XMLDescriptionExtractor;
 
 public class DataProcessing {
     
-    private String datasetDir;
-    private String targePerson;
+    private String datasetDir = ".";
+    private String targePerson = "";
     
     public static void main(String[] args) throws Exception {
         DataProcessing dp = new DataProcessing();
-        dp.setDatasetDir("weps2007/test");
+        dp.setDatasetDir("F:/Work/NLP_Project2/weps2007/test");
         dp.setTargePerson("Alvin_Cooper");
-        dp.extractNamedEntities();
         dp.extractXMLDescriptions();
+        dp.extractNamedEntities(); 
         dp.mergeRawData();
         dp.runScorer();
     }
@@ -46,8 +46,8 @@ public class DataProcessing {
         extractor.setDatasetDir(this.datasetDir);
         extractor.setTargetPerson(this.targePerson);
         extractor.setTargetDir("named_entities_data"); // 写到哪里
-        extractor.addDataDir("test_webpages_bodies_version_1"); // 源文件
-        extractor.addDataDir("url_data"); // URL文件
+        extractor.addDataDir("test_webpages_bodies_version_1");
+        extractor.addDataDir("xml_descriptions");
         extractor.extractContentsPerDoc();
     }
 

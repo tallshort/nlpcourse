@@ -28,7 +28,7 @@ public abstract class AbstractExtractor {
     public void extractContentsPerDoc() {
         List<String> nameList = this.getPeopleNameList();
         for (String name : nameList) {
-            if (this.targetPerson.equals("") || !name.equals(this.targetPerson)) {
+            if (!this.targetPerson.equals("") && !name.equals(this.targetPerson)) {
                 continue;
             }
             String webPagesDir
@@ -46,7 +46,7 @@ public abstract class AbstractExtractor {
     public void extractContentsPerName() {
         List<String> nameList = this.getPeopleNameList();
         for (String name : nameList) {
-            if (this.targetPerson.equals("") || !name.equals(this.targetPerson)) {
+            if (!this.targetPerson.equals("") && !name.equals(this.targetPerson)) {
                 continue;
             }
             extractContent(null, name, null);

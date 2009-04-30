@@ -1,5 +1,7 @@
 package weps;
 
+import java.io.File;
+
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -25,7 +27,7 @@ public class XMLDescriptionExtractor extends AbstractExtractor {
         String xmlFilePath = this.getDatasetDir()
             + "/" + DESCRIPTION_FILES_DIR + "/" + name + ".xml"; 
         Builder builder = new Builder(false);
-        Document doc = builder.build(xmlFilePath);
+        Document doc = builder.build(new File(xmlFilePath));
         Element corpus = doc.getRootElement();
         Elements docElements = corpus.getChildElements("doc");
         for (int i = 0; i < docElements.size(); i++) {
