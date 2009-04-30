@@ -8,6 +8,8 @@ import nu.xom.Element;
 import nu.xom.Elements;
 import weps.util.TextFile;
 
+import com.google.common.base.Join;
+
 public class XMLDescriptionExtractor extends AbstractExtractor {
 
     public XMLDescriptionExtractor() throws Exception {
@@ -34,8 +36,11 @@ public class XMLDescriptionExtractor extends AbstractExtractor {
             Element docElement = docElements.get(i);
             String rank = String.format("%03d",
                     Integer.parseInt(docElement.getAttributeValue("rank")));
-            String title = docElement.getAttributeValue("title");
-            String snippet = docElement.getFirstChildElement("snippet").getValue();
+            String[] nameParts = name.split("_");
+            String title
+                = docElement.getAttributeValue("title").replaceAll(Join.join("|", nameParts), "");
+            String snippet
+                = docElement.getFirstChildElement("snippet").getValue().replaceAll(Join.join("|", nameParts), "");;
             String outputPath = this.getTargetDir() + "/" + name + "_" + rank + ".txt";
             System.out.println("Extract XML Description " + name + " " + rank);
             TextFile.write(outputPath, title + "\n" + snippet);
