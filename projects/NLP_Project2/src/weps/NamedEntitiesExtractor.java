@@ -19,13 +19,7 @@ public class NamedEntitiesExtractor extends AbstractExtractor {
 
     @Override
     protected void extractContent(String filePath, String name, String rank) {
-        extractXMLDescriptions(name);
         extractNamedEntites(name, rank);      
-    }
-
-    private void extractXMLDescriptions(String name) {
-        String xmlFilePath = this.getDatasetDir()
-            + "/" + DESCRIPTION_FILES_DIR + "/" + ".xml"; 
     }
 
     private void extractNamedEntites(String name, String rank) {
