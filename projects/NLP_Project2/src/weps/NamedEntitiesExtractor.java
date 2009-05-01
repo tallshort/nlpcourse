@@ -36,6 +36,7 @@ public class NamedEntitiesExtractor extends AbstractExtractor {
         for (String namePart : nameParts) {
             removedEntites.add(namePart);
             removedEntites.add(namePart.toLowerCase());
+            removedEntites.add(namePart.toUpperCase());
         }
         // System.out.println(namedEntities);
         namedEntities.removeAll(removedEntites);
