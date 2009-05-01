@@ -36,7 +36,9 @@ public class XMLDescriptionExtractor extends AbstractExtractor {
             Element docElement = docElements.get(i);
             String rank = String.format("%03d",
                     Integer.parseInt(docElement.getAttributeValue("rank")));
-            String[] nameParts = name.split("_");
+            // e.g. Alvin_Copper_alvin_copper_ALVIN_COOPER
+            String[] nameParts
+                = (name + "_" + name.toLowerCase() + "_" + name.toUpperCase()).split("_");
             String title
                 = docElement.getAttributeValue("title").replaceAll(Join.join("|", nameParts), "");
             String snippet

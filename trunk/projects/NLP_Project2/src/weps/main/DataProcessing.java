@@ -16,11 +16,11 @@ public class DataProcessing {
     public static void main(String[] args) throws Exception {
         DataProcessing dp = new DataProcessing();
         dp.setDatasetDir("F:/Work/NLP_Project2/weps2007/test");
-        dp.setTargePerson("Alvin_Cooper");
+        //dp.setTargePerson("Alvin_Cooper");
         dp.extractXMLDescriptions();
-        dp.extractNamedEntities(); 
-        dp.mergeRawData();
-        dp.runScorer();
+        //dp.extractNamedEntities(); 
+        //dp.mergeRawData();
+        //dp.runScorer();
     }
     
     private void mergeRawData() throws Exception {
