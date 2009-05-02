@@ -3,9 +3,11 @@ package weps.main;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import weps.ClusterPriorExtractor;
 import weps.ClutoClusterXMLGenerator;
 import weps.NamedEntitiesExtractor;
 import weps.RawDataMerger;
+import weps.TermFrequencyExtractor;
 import weps.XMLDescriptionExtractor;
 
 public class DataProcessing {
@@ -19,8 +21,11 @@ public class DataProcessing {
         // dp.setTargePerson("Jonathan_Brooks");
         // dp.extractXMLDescriptions();
         //dp.extractNamedEntities(); 
-        dp.mergeRawData();
+        // dp.mergeRawData();
         // dp.runScorer();
+        // dp.calcTermFrequency();
+         dp.extractClusterPriors();
+        //dp.gererateClusterXMLs();
     }
     
     private void mergeRawData() throws Exception {
@@ -52,7 +57,20 @@ public class DataProcessing {
     }
     
     private void calcTermFrequency() {
-        
+        TermFrequencyExtractor extractor = new TermFrequencyExtractor();
+        extractor.setDatasetDir(this.datasetDir);
+        extractor.setTermDir("merged_data");
+        extractor.setTargetDir(".");
+        extractor.extractContentsPerDoc();
+        extractor.doStatistics();
+    }
+    
+    private void extractClusterPriors() throws Exception {
+        ClusterPriorExtractor extractor = new ClusterPriorExtractor();
+        extractor.setDatasetDir(this.datasetDir);
+        extractor.extractContentsPerName();
+        System.out.println(extractor.getClusterNumberMap());
+        System.out.println(extractor.getDiscardedMap());
     }
 
     private void gererateClusterXMLs() throws Exception {
