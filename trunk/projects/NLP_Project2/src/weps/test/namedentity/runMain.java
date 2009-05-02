@@ -22,12 +22,15 @@ public class runMain {
         // TODO Auto-generated method stub
         /* 先将所有文件写入.m 和 .clabel文件 然后进行exe调用执行CLUTO产生所有分类文件 */
 
-        int classNum = 30; // 设置分类个数
-        File sourceDir = new File("clutoRawData"); // 存放源数据的地方
+        int classNum = 40; // 设置分类个数
+        int[] num={42,18,18,1,27,41,38,62,58,80,47,14,54,82,32,65,33,50,69,81,20,24,38,56,35,41,72,71,51,90};
+        File sourceDir = new File("merged_data_all2008_all"); // 存放源数据的地方
         File[] allFile = sourceDir.listFiles();
+        //processDiscard(allFile,"merged_data_all2008_all");   //处理丢失的文件，以对齐行标
         String lastName = allFile[0].getName();
         lastName = lastName.substring(0, lastName.lastIndexOf("_"));// 取得当前名字
         int lastPos = 0;
+        int c=0;
         for (int i = 0; i < allFile.length; i++) {
             String currName = allFile[i].getName();
             currName = currName.substring(0, currName.lastIndexOf("_"));
@@ -35,24 +38,81 @@ public class runMain {
                 System.out.println("正在处理:" + lastName);
                 processAll(allFile, lastName, lastPos, i);// 将要处理的文件返回传入
                 lastPos = i;
-                excuteClusty(classNum, lastName);
+                excuteClusty(num[c], lastName);
                 lastName = currName; // 对下个人进行聚类
+                c++;
             }
         }
         System.out.println("正在处理:" + lastName);
         processAll(allFile, lastName, lastPos, allFile.length);// 处理最后一个人
-        excuteClusty(classNum, lastName);
+        excuteClusty(num[29], lastName);
     }
-
+    private static void processDiscard(File[] fileList,String path)
+    {
+    	int no=0;
+    	String temp =fileList[0].getName();
+    	String lastName = fileList[0].getName().substring(0, temp.lastIndexOf("_"));
+    	for(int i=0;i<fileList.length;i++)
+    	{
+    		String currentName=fileList[i].getName();
+    		currentName = currentName.substring(0, currentName.lastIndexOf("_"));
+    		String tempNo =fileList[i].getName();
+        	tempNo=tempNo.substring(tempNo.lastIndexOf("_")+1,tempNo.indexOf(".")); //取序号
+        	int currentNo=Integer.parseInt(tempNo);
+        	if(currentName.equals(lastName) && currentNo!=no )//处理文件丢失
+        	{
+        		while(no<currentNo)
+        		{
+        			String fileNewName="";
+        			if(no<10)
+        			{
+        				fileNewName=currentName+"_00"+no;
+        			}
+        			else
+        			{
+        				fileNewName=currentName+"_0"+no;
+        			}
+        			File f =new File(path+"/"+fileNewName+".txt");
+        			try
+        			{
+        				OutputStream os=new FileOutputStream(f,false);
+        				os.write("".getBytes());
+        				os.close();
+        			}
+        			catch(Exception e)
+        			{
+        				e.printStackTrace();
+        			}
+        			no++;
+        		}
+        		no++;
+        	}
+        	else if(!currentName.equals(lastName))
+        	{
+        		no=1;   //对每个人重置信息
+        		lastName=currentName;
+        	}
+        	else 
+        		no++;
+    	}
+    }
     private static void excuteClusty(int classNum, String lastName) {
         try // 执行命令行 处理当前 名字 矩阵信息
         {
-            String s = "vcluster -clmethod=rb "
+            String s = "vcluster -clmethod=agglo "
                     + // 采用层次聚类
-                    "-clustfile=matrixFile\\" + lastName + classNum
+                    "-clustfile=matrixFile\\" + lastName + "0"
                     + ".cluster "
-                    + // 最后分类文件
-                    "-showtree " + "-showfeatures "
+                    //+"-agglofrom=80 "
+                    //+"-rowmodel=log "
+                    +"-sim=cos "
+                    //+"-colmodel=idf " 
+                    //+"-mincomponent=8 "
+                    //+"cstype=best "  //聚类算法为rb rbr graph才可用
+                    //+"-nnbrs=80 "
+                    +"-colprune=1 "   //**选择最有影响的列数，总列数*系数
+                    + "-crfun=upgma "// 最后分类文件
+                    +"-showtree " + "-showfeatures "
                     + "-clabelfile=matrixFile\\" + lastName + ".clabel " + // 添加列标文件
                     "matrixFile\\" + lastName + ".m " + classNum;
             Process p = Runtime.getRuntime().exec(s); // 要处理的矩阵文件
