@@ -50,6 +50,7 @@ public class BlogDataSetCreator implements DataSetCreator {
 //                "SAP Gets Business Intelligence. What Do You Get?"
 //                );
 //        blogDataList.add(blogItem);
+        
         blogItem = createBlogItem(
                 "collective intelligence excites execs",
                 "SAP",

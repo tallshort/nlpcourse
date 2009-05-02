@@ -8,8 +8,8 @@ public interface TextDataItem {
     
     public TagMagnitudeVector getTagMagnitudeVector();
     
-    public Integer getClusterId();
+    public TextCluster getCluster();
     
-    public void setClusterId(Integer clusterId);
+    public void setCluster(TextCluster cluster);
     
 }

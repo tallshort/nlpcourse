@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import weps.AbstractExtractor;
 import weps.INamedEntityRecognizer;
+import weps.MofoMicroformatsExtractor;
 import weps.StandfordNamedEntityRecognizer;
 import weps.test.mock.BlogCluster;
 import weps.test.mock.BlogDataSetCreator;
@@ -52,10 +53,10 @@ public class UnitTest {
                     String rank) {
             }
         };
-        extractor.setDatasetDir("D:/MLPROJECT2/weps2007/test");
+        extractor.setDatasetDir("weps2007/test");
         List<String> nameList = extractor.getPeopleNameList();
         assertEquals(30, nameList.size());
-        extractor.setDatasetDir("D:/MLPROJECT2/weps2007/training");
+        extractor.setDatasetDir("weps2007/training");
         nameList = extractor.getPeopleNameList();
         assertEquals(49, nameList.size());
     }
@@ -122,10 +123,10 @@ public class UnitTest {
     @Test
     public void testTextAnalyzer() throws IOException {
         String title = "Collective Intelligence and Web2.0";
-        String body = "Web2.0 is all about connecting users to users, " +
-        		"inviting users to participate and applying their " +
-        		"collective intelligence to improve the application. " +
-        		"Collective intelligence enhances the user experiense";
+        String body = "Web2.0 is all about connecting users to users, "
+                + "inviting users to participate and applying their "
+                + "collective intelligence to improve the application. "
+                + "Collective intelligence enhances the user experiense";
         TagCacheImpl t = new TagCacheImpl();
         InverseDocFreqEstimator idfEstimator = new EqualInverseDocFreqEstimator();
         TextAnalyzer analyzer = new LuceneTextAnalyzer(t, idfEstimator);
@@ -135,64 +136,68 @@ public class UnitTest {
         // System.out.println(tags);
         assertEquals(21, tags.size());
         TagMagnitudeVector tmvBody = analyzer.createTagMagnitudeVector(body);
-        assertTrue(tmvBody.toString().contains("[users, user, 0.6246950475544243]"));
-        PorterStemStopWordAnalyzer.stopWords = new String[] {
-                "and", "of", "the", "to", "is", "their", "can", "all"
-        };
+        assertTrue(tmvBody.toString().contains(
+                "[users, user, 0.6246950475544243]"));
+        PorterStemStopWordAnalyzer.stopWords = new String[] { "and", "of",
+                "the", "to", "is", "their", "can", "all" };
         tmvBody = analyzer.createTagMagnitudeVector(body);
         TagMagnitudeVector tmvTitle = analyzer.createTagMagnitudeVector(title);
         TagMagnitudeVector tmvCombined = tmvTitle.add(tmvBody);
         // System.out.println(tmvCombined);
-        assertTrue(tmvCombined.toString().contains("[users, user, 0.4364357804719848]"));
+        assertTrue(tmvCombined.toString().contains(
+                "[users, user, 0.4364357804719848]"));
     }
-    
+
     @Test
     public void testKMeansCluster() throws Exception {
-        List<TextDataItem> blogData = new BlogDataSetCreator().createLearningData();
+        List<TextDataItem> blogData = new BlogDataSetCreator()
+                .createLearningData();
         Clusterer clusterer = new TextKMeansClusterer(blogData, 2) {
             @Override
             protected TextCluster createTextCluster(int clusterId) {
                 return new BlogCluster(clusterId);
             }
         };
-        // for (int i = 0; i < 10; i++) {
-            List<TextCluster> clusters = clusterer.cluster();
-            System.out.println(clusterer);
-            // assertEquals(2, clusters.get(0).getDataItems().size());
-        // }       
+        List<TextCluster> clusters = clusterer.cluster();
+        // System.out.println(clusterer);
+        assertEquals(2, clusters.get(0).getDataItems().size());
+        assertEquals(2, clusters.get(1).getDataItems().size());
+
     }
-    
+
     @Test
     public void testHierarchialCluster() throws Exception {
-        List<TextDataItem> blogData = new BlogDataSetCreator().createLearningData();
+        List<TextDataItem> blogData = new BlogDataSetCreator()
+                .createLearningData();
         Clusterer clusterer = new TextHierarchialClusterer(blogData) {
             @Override
             protected HierCluster createHierCluster(int clusterId,
                     HierCluster c1, HierCluster c2, double similarity,
                     TextDataItem textDataItem) {
-                return new BlogHierCluster(clusterId, c1, c2, similarity, textDataItem);
-            }        
+                return new BlogHierCluster(clusterId, c1, c2, similarity,
+                        textDataItem);
+            }
         };
         List<TextCluster> clusters = clusterer.cluster();
         System.out.println("");
-        System.out.println(clusterer);    
+        System.out.println(clusterer);
     }
-    
-    @Test
-    public void testNamedEntityRecognizer() throws Exception {
-        INamedEntityRecognizer recognizer = new StandfordNamedEntityRecognizer();
-        String text = "first service mortgagefirst service mortgage, u 1st service mortgage, tony bryant, debra tillman, college park, georgia mortgage, mortgage lenders, atlanta lenders, home banc, georgia lenders, union city, tucker, alabama, new orleans, equal housing lender, hud homes, refi, art huntley, lenders, namb, fha, va, remax, investor loans, u first realty, mortgage lenders, free, FREE, atlanta mortgage loans, georgia mortgage loans, louisiana mortgage loans, alabama mortgage loans, birmingham mortgage loans, tuscaloosa mortgage loans, new orleans mortgage loans, atlanta mortgage companies, georgia mortgage companies, louisiana mortgage companies, alabama mortgage companies, birmingham mortgage companies, hud homes, hud home loans, georgia foreclosures, alabama foreclosures, louisiana foreclosures, investor loans, first time home buyer loans, relocation loans, commercial loans, 80/20 loans, fha loans, va loans, immigrant loans, down payment assistance, construction loansofficial website of First Service Mortgage offering all types of mortgages";
-        List<String> namedEntities = recognizer.recognizeNamedEntities(text);
-        assertEquals(19, namedEntities.size());
-    }
-    
-//    @Test
-//    public void testMicroformatsExtractor() {
-//        AbstractExtractor extractor
-//        = new MofoMicroformatsExtractor("asset/microformats_extractor.rb");
-//        extractor.setDatasetDir("weps2007/test");
-//        extractor.setTargetDir("test_webpages_microformats");
-//        extractor.extractContents();
-//    }
-    
+
+     @Test
+     public void testNamedEntityRecognizer() throws Exception {
+     INamedEntityRecognizer recognizer = new StandfordNamedEntityRecognizer();
+     String text = "first service mortgagefirst service mortgage, u 1st service mortgage, tony bryant, debra tillman, college park, georgia mortgage, mortgage lenders, atlanta lenders, home banc, georgia lenders,      union city, tucker, alabama, new orleans, equal housing lender, hud      homes, refi, art huntley, lenders, namb, fha, va, remax, investor loans,      u first realty, mortgage lenders, free, FREE, atlanta mortgage loans,      georgia mortgage loans, louisiana mortgage loans, alabama mortgage loans,      birmingham mortgage loans, tuscaloosa mortgage loans, new orleans      mortgage loans, atlanta mortgage companies, georgia mortgage companies,      louisiana mortgage companies, alabama mortgage companies, birmingham      mortgage companies, hud homes, hud home loans, georgia foreclosures,      alabama foreclosures, louisiana foreclosures, investor loans, first time      home buyer loans, relocation loans, commercial loans, 80/20 loans, fha      loans, va loans, immigrant loans, down payment assistance, construction      loansofficial website of First Service Mortgage offering all types of      mortgages";
+     List<String> namedEntities = recognizer.recognizeNamedEntities(text);
+     assertEquals(19, namedEntities.size());
+     }
+
+//     @Test
+//     public void testMicroformatsExtractor() {
+//     AbstractExtractor extractor
+//     = new MofoMicroformatsExtractor("asset/microformats_extractor.rb");
+//     extractor.setDatasetDir("weps2007/test");
+//     extractor.setTargetDir("test_webpages_microformats");
+//     extractor.extractContents();
+//     }
+
 }

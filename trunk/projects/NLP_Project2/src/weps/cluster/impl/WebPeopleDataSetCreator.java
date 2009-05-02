@@ -22,6 +22,7 @@ public class WebPeopleDataSetCreator implements DataSetCreator {
     private TextAnalyzer textAnalyzer;
     
     private String dataSetDir = "merged_data";
+    private String targetPerson = "";
     
     public WebPeopleDataSetCreator() {
         this.freqEstimator = new SimpleInverseDocFreqEstimator(100);
@@ -32,8 +33,12 @@ public class WebPeopleDataSetCreator implements DataSetCreator {
         List<TextDataItem> webPeopleDataList = new ArrayList<TextDataItem>();
         for (String fileName : new File(this.dataSetDir).list()) {
             String name = fileName.substring(0, fileName.lastIndexOf("_"));
-            String rank = fileName.substring(fileName.lastIndexOf("_"));
-            String data = TextFile.read(this.dataSetDir + "/" + fileName).replace("|", "");
+            if (!name.equals(this.targetPerson)) {
+                continue;
+            }
+            String rank = fileName.substring(fileName.lastIndexOf("_") + 1, 
+                    fileName.lastIndexOf("."));
+            String data = TextFile.read(this.dataSetDir + "/" + fileName).replace("|", " ");
             webPeopleDataList.add(this.createWebPeopleItem(name, rank, data));
         }
         return webPeopleDataList;
@@ -44,6 +49,7 @@ public class WebPeopleDataSetCreator implements DataSetCreator {
         WebPeopleDocEntry docEntry = new WebPeopleDocEntry(name, rank);
         TagMagnitudeVector tmv
             = this.textAnalyzer.createTagMagnitudeVector(data);
+        // System.out.println(tmv);
         for (TagMagnitude tm : tmv.getTagMagnitudes()) {
             this.freqEstimator.addCount(tm.getTag());
         }
@@ -56,5 +62,13 @@ public class WebPeopleDataSetCreator implements DataSetCreator {
 
     public void setDataSetDir(String dataSetDir) {
         this.dataSetDir = dataSetDir;
+    }
+
+    public String getTargetPerson() {
+        return targetPerson;
+    }
+
+    public void setTargetPerson(String targetPerson) {
+        this.targetPerson = targetPerson;
     }
 }

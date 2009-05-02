@@ -1,8 +1,5 @@
 package weps.cluster.impl;
 
-import java.util.ArrayList;
-
-import ci.cluster.TextCluster;
 import ci.cluster.TextDataItem;
 import ci.cluster.impl.TextClusterImpl;
 
@@ -17,7 +14,9 @@ public class WebPeopleCluster extends TextClusterImpl {
         StringBuilder sb = new StringBuilder();
         sb.append("Id=" + this.getClusterId());
         for (TextDataItem item : this.getDataItems()) {
-            // TODO the content of the item
+            WebPeopleDocEntry docEntry = (WebPeopleDocEntry)item.getData();
+            sb.append("\n\tName=" + docEntry.getName());
+            sb.append("\tRank=" + docEntry.getRank());
         }
         return sb.toString();
     }
