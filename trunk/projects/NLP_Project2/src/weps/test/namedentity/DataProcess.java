@@ -33,7 +33,9 @@ public class DataProcess {
         String result = "";
         String[] content = ReadFromFile().toString().split("[|]");
         for (String s : content) {
-            if (!s.trim().equals("")) {
+        	s=s.replaceAll("[.]", "").replaceAll(",", "").replaceAll(":", "").replaceAll("!", "").replaceAll(
+        			"/", "").replaceAll("'", "").replaceAll("[(]", "").replaceAll("[)]", "").replaceAll("&", "");
+            if (!s.trim().equals("") && s.trim().length()>1) {
                 if (countMap.containsKey(s)) {
                     countMap.get(s).SetPlus(); // 若该单词已经在本文出现，则计数++
                 } else // 若不存在，向countMap添加记录
