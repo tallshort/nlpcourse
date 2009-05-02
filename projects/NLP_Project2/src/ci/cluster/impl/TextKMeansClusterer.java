@@ -62,8 +62,10 @@ public abstract class TextKMeansClusterer implements Clusterer {
         Set<Integer> usedIndexes = new HashSet<Integer>();
         for (int i = 0; i < this.numClusters; i++) {
             TextCluster cluster = createTextCluster(i);
-            cluster.setCenter(this.getDataItemAtRandom(usedIndexes)
-                    .getTagMagnitudeVector());
+            TextDataItem item = this.getDataItemAtRandom(usedIndexes);
+            item.setCluster(cluster);
+            // System.out.println(item.getCluster().getClusterId());
+            cluster.setCenter(item.getTagMagnitudeVector());
             this.clusters.add(cluster);
         }
     }
@@ -90,11 +92,11 @@ public abstract class TextKMeansClusterer implements Clusterer {
         int numChanges = 0;
         for (TextDataItem item : this.textDataSet) {
             TextCluster newCluster = this.getClosestCluster(item);
-            if ((item.getClusterId() == null) 
-                    || (item.getClusterId().intValue() 
-                            != newCluster.getClusterId())) {
+            // System.out.println("New cluster: " + newCluster.getClusterId());
+            if ((item.getCluster() == null) 
+                    || (!item.getCluster().equals(newCluster))) {
                 numChanges++;
-                item.setClusterId(newCluster.getClusterId());
+                item.setCluster(newCluster);
             }
             newCluster.addDataItem(item);
         }
@@ -102,14 +104,19 @@ public abstract class TextKMeansClusterer implements Clusterer {
     }
 
     private TextCluster getClosestCluster(TextDataItem item) {
-        TextCluster closestCluster = null;
-        Double hightSimilarity = null;
+        TextCluster closestCluster = item.getCluster();
+        Double maxSimilarity = null;
+        // The init maxSimilarity
+        if (closestCluster != null) {
+            maxSimilarity
+                = closestCluster.getCenter().dotProduct(item.getTagMagnitudeVector());
+        }
         for (TextCluster cluster : this.clusters) {
             double similarity
                 = cluster.getCenter().dotProduct(item.getTagMagnitudeVector());
-            if ((hightSimilarity) == null
-                    || (hightSimilarity.doubleValue() < similarity)) {
-                hightSimilarity = similarity;
+            if (maxSimilarity == null
+                    || ((similarity - maxSimilarity.doubleValue()) > SIMILARITY_DELTA)) {
+                maxSimilarity = similarity;
                 closestCluster = cluster;
             }
         }
