@@ -1,6 +1,7 @@
 package weps;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,7 +17,14 @@ public class ClutoClusterXMLGenerator extends AbstractExtractor {
     private int clusterNum;
     private String xmlResultsDir = ".";
 
-    public void gererateClusterXMLs() {
+    public void gererateClusterXMLs() throws Exception {
+        
+        ClusterPriorExtractor priorExtractor
+            = new ClusterPriorExtractor();
+        priorExtractor.setDatasetDir(this.getDatasetDir());
+        priorExtractor.extractContentsPerName();
+        Map<String, HashSet<String>> discardedMap = priorExtractor.getDiscardedMap();
+        
         for (String name : this.getPeopleNameList()) {
             if (!this.getTargetPerson().equals("")
                     && !name.equals(this.getTargetPerson())) {
@@ -42,27 +50,38 @@ public class ClutoClusterXMLGenerator extends AbstractExtractor {
 
             // Generate XML cluster file
             Element root = new Element("clustering");
-            Element discarded = null;
+            Element discarded = new Element("discarded");
             for (Map.Entry<String, ArrayList<String>> clusterResult : clusterResultMap
                     .entrySet()) {
-                Element cluster = new Element("entity");
                 String clusterId = clusterResult.getKey();
+                // -1 -> discarded cluster
                 if (clusterId.equals("-1")) {
-                    discarded = cluster = new Element("discarded");
+                    for (String rank : clusterResult.getValue()) {
+                        Element doc = new Element("doc");
+                        doc.addAttribute(new Attribute("rank", rank));
+                        discarded.appendChild(doc);              
+                    }
                 } else {
-                    cluster = new Element("entity");
+                    Element cluster = new Element("entity");
                     cluster.addAttribute(new Attribute("id", clusterId));
-                }
-                for (String rank : clusterResult.getValue()) {
-                    Element doc = new Element("doc");
-                    doc.addAttribute(new Attribute("rank", rank));
-                    cluster.appendChild(doc);
-                }
-                if (!cluster.getLocalName().equals("discarded")) {
-                    root.appendChild(cluster);
+                    // Add doc elements
+                    for (String rank : clusterResult.getValue()) {
+                        Element doc = new Element("doc");
+                        doc.addAttribute(new Attribute("rank", rank));
+                        if (discardedMap.get(name).contains(rank)) {
+                            discarded.appendChild(doc);
+                        } else {
+                            cluster.appendChild(doc);
+                        }                
+                    }
+                    // Discard the empty entity element
+                    if (cluster.getChildCount() != 0) {
+                        root.appendChild(cluster);
+                    }
                 }
             }
-            if (discarded != null) {
+            // Discard the empty discarded element
+            if (discarded.getChildCount() != 0) {
                 root.appendChild(discarded);
             }
             Document doc = new Document(root);

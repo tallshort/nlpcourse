@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import weps.AbstractExtractor;
-import weps.ClusterNumberExtractor;
+import weps.ClusterPriorExtractor;
 import weps.cluster.impl.WebPeopleDataSetCreator;
 import weps.cluster.impl.WebPeopleKMeansClusterer;
 import ci.cluster.Clusterer;
@@ -17,7 +17,7 @@ public class RunCluster {
         String dataSetDir = "merged_data_conll_all";
         List<String> peopleNameList = getWebPeopleNameList();
         
-        ClusterNumberExtractor extractor = new ClusterNumberExtractor();
+        ClusterPriorExtractor extractor = new ClusterPriorExtractor();
         extractor.setDatasetDir("weps2007/test");
         extractor.extractContentsPerName();
         Map<String, Integer> clusterNumberMap = extractor.getClusterNumberMap();
