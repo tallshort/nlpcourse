@@ -16,11 +16,11 @@ public class DataProcessing {
     public static void main(String[] args) throws Exception {
         DataProcessing dp = new DataProcessing();
         dp.setDatasetDir("F:/Work/NLP_Project2/weps2007/test");
-        // dp.setTargePerson("Alvin_Cooper");
+        // dp.setTargePerson("Jonathan_Brooks");
         // dp.extractXMLDescriptions();
         //dp.extractNamedEntities(); 
-        //dp.mergeRawData();
-        dp.runScorer();
+        dp.mergeRawData();
+        // dp.runScorer();
     }
     
     private void mergeRawData() throws Exception {
@@ -49,6 +49,10 @@ public class DataProcessing {
         extractor.addDataDir("test_webpages_bodies_version_1");
         extractor.addDataDir("xml_descriptions");
         extractor.extractContentsPerDoc();
+    }
+    
+    private void calcTermFrequency() {
+        
     }
 
     private void gererateClusterXMLs() throws Exception {
