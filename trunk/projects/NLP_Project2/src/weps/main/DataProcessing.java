@@ -24,8 +24,8 @@ public class DataProcessing {
         // dp.mergeRawData();
         // dp.runScorer();
         // dp.calcTermFrequency();
-         dp.extractClusterPriors();
-        //dp.gererateClusterXMLs();
+        // dp.extractClusterPriors();
+        dp.gererateClusterXMLs();
     }
     
     private void mergeRawData() throws Exception {
@@ -76,10 +76,10 @@ public class DataProcessing {
     private void gererateClusterXMLs() throws Exception {
         ClutoClusterXMLGenerator generator = new ClutoClusterXMLGenerator();
         generator.setDatasetDir(this.datasetDir);
-        generator.setClutoClusterResultsDir("cluto_result2/matrixFile");
+        generator.setClutoClusterResultsDir("cluto_result2/temp");
         // generator.setTargetPerson(this.targetPerson);
         generator.setXmlResultsDir("cluto_xml_result/cluto_xml_result2");
-        generator.setClusterNum(40);
+        generator.setClusterNum(0);
         generator.gererateClusterXMLs();
     }
     

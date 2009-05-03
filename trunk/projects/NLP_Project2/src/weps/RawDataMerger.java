@@ -11,7 +11,6 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 
 import weps.util.TextFile;
-import ci.textanalysis.Tag;
 import ci.textanalysis.lucene.impl.PhrasesCacheImpl;
 import ci.textanalysis.lucene.impl.SynonymPhraseStopWordAnalyzer;
 import ci.textanalysis.lucene.impl.SynonymsCacheImpl;
