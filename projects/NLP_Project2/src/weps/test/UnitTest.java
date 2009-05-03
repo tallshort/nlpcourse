@@ -14,10 +14,10 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.junit.Test;
 
-import weps.AbstractExtractor;
-import weps.INamedEntityRecognizer;
-import weps.MofoMicroformatsExtractor;
-import weps.StandfordNamedEntityRecognizer;
+import weps.extractor.AbstractExtractor;
+import weps.extractor.INamedEntityRecognizer;
+import weps.extractor.MofoMicroformatsExtractor;
+import weps.extractor.StandfordNamedEntityRecognizer;
 import weps.test.mock.BlogCluster;
 import weps.test.mock.BlogDataSetCreator;
 import weps.test.mock.BlogHierCluster;

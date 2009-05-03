@@ -1,4 +1,4 @@
-package weps;
+package weps.extractor;
 
 public interface IBodyExtractor {
     /**

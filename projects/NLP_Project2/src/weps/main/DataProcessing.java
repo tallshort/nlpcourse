@@ -3,12 +3,12 @@ package weps.main;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import weps.ClusterPriorExtractor;
-import weps.ClutoClusterXMLGenerator;
-import weps.NamedEntitiesExtractor;
-import weps.RawDataMerger;
-import weps.TermFrequencyExtractor;
-import weps.XMLDescriptionExtractor;
+import weps.extractor.ClusterPriorExtractor;
+import weps.extractor.ClutoClusterXMLGenerator;
+import weps.extractor.NamedEntitiesExtractor;
+import weps.extractor.RawDataMerger;
+import weps.extractor.TermFrequencyExtractor;
+import weps.extractor.XMLDescriptionExtractor;
 
 public class DataProcessing {
     
@@ -21,18 +21,19 @@ public class DataProcessing {
         // dp.setTargePerson("Jonathan_Brooks");
         // dp.extractXMLDescriptions();
         //dp.extractNamedEntities(); 
-        // dp.mergeRawData();
+        dp.mergeRawData();
         // dp.runScorer();
         // dp.calcTermFrequency();
         // dp.extractClusterPriors();
-        dp.gererateClusterXMLs();
+        // dp.gererateClusterXMLs();
     }
     
     private void mergeRawData() throws Exception {
         RawDataMerger merger = new RawDataMerger();
         merger.setDatasetDir(this.datasetDir);
-        merger.addMergeDir("xml_descriptions");
-        merger.addMergeDir("named_entities_data");
+        merger.addMergeDir("xml_descriptions", 1);
+        merger.addMergeDir("named_entities_data_conll", 1);
+        merger.addMergeDir("url_data", 1);
         merger.setTargetDir("merged_data");
         merger.setTargetPerson(this.targePerson);
         merger.extractContentsPerDoc();

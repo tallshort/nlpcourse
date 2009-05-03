@@ -2,9 +2,9 @@ package weps.test;
 
 import java.util.List;
 
-import weps.AbstractExtractor;
-import weps.IBodyExtractor;
-import weps.PythonBodyExtractor;
+import weps.extractor.AbstractExtractor;
+import weps.extractor.IBodyExtractor;
+import weps.extractor.PythonBodyExtractor;
 
 public class Main {
 
