@@ -1,4 +1,4 @@
-package weps;
+package weps.extractor;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,7 +33,11 @@ public class RawDataMerger extends AbstractExtractor {
         List<String> wordList = new ArrayList<String>();
         for (String mergeDir : this.mergeDirs) {
             String dataFilePath = mergeDir + "/" + name + "_" + rank + ".txt";
-            wordList.addAll(new TextFile(dataFilePath, "[| \n]"));
+            try {
+                wordList.addAll(new TextFile(dataFilePath, "[| \n]"));
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
         }
         System.out.println("Merge Raw Data " + name + " " + rank);
         String outputPath = this.getTargetDir() + "/" + name + "_" + rank + ".txt";
@@ -58,8 +62,10 @@ public class RawDataMerger extends AbstractExtractor {
         return cleanedWordList;
     }
 
-    public void addMergeDir(String mergeDir) {
-        this.mergeDirs.add(mergeDir);
+    public void addMergeDir(String mergeDir, int times) {
+        for (int i = 0; i < times; i++) {
+            this.mergeDirs.add(mergeDir);
+        }
     }
 
 }

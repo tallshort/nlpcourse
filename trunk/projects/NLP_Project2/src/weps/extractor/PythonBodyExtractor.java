@@ -1,4 +1,4 @@
-package weps;
+package weps.extractor;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
