@@ -1,5 +1,7 @@
 package ci.cluster.impl;
 
+import java.util.List;
+
 import ci.cluster.TextDataItem;
 import ci.cluster.hiercluster.HierCluster;
 
@@ -34,6 +36,18 @@ public class HierClusterImpl extends TextClusterImpl implements HierCluster {
 
     public double getSimilarity() {
         return this.similarity;
+    }
+    
+    @Override
+    public List<TextDataItem> getDataItems() {
+        List<TextDataItem> dataItems = super.getDataItems();
+        if (this.getChild1() != null) {
+            dataItems.addAll(this.getChild1().getDataItems());
+        }
+        if (this.getChild2() != null) {
+            dataItems.addAll(this.getChild2().getDataItems());
+        }
+        return dataItems;
     }
 
     @Override

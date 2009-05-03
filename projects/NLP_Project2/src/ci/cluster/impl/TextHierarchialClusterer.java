@@ -18,25 +18,26 @@ public abstract class TextHierarchialClusterer implements Clusterer {
     private Map<Integer, HierCluster> availableClusters;
     private List<TextDataItem> textDataSet;
 
-    private HierCluster rootCluster;
-
     private int idCount = 0;
     private Set<HierDistance> allDistances;
+    
+    private int numOfRootClusters = 1;
+    
+    private List<TextCluster> clusters;
 
-    public TextHierarchialClusterer(List<TextDataItem> textDataSet) {
+    public TextHierarchialClusterer(List<TextDataItem> textDataSet, int numOfRootClusters) {
         this.textDataSet = textDataSet;
         this.availableClusters = new HashMap<Integer, HierCluster>();
         this.allDistances = new HashSet<HierDistance>();
+        this.numOfRootClusters = numOfRootClusters;
     }
 
     public List<TextCluster> cluster() {
         this.createInitialClusters();
-        while (this.allDistances.size() > 0) {
+        while (this.availableClusters.size() > this.numOfRootClusters) {
             this.addNextCluster();
         }
-        List<TextCluster> clusters = new ArrayList<TextCluster>();
-        clusters.add(this.rootCluster);
-        return clusters;
+        return new ArrayList<TextCluster>(this.availableClusters.values());
     }
 
     private void createInitialClusters() {
@@ -78,10 +79,6 @@ public abstract class TextHierarchialClusterer implements Clusterer {
         HierCluster cluster = createNewCluster(hd);
         pruneDistances(hd.getC1(), hd.getC2(), sortDist);
         addNewClusterDistances(cluster);
-        
-        if (this.allDistances.size() == 0) {
-            this.rootCluster = cluster;
-        }
     }
 
     private HierCluster createNewCluster(HierDistance hd) {
@@ -122,7 +119,7 @@ public abstract class TextHierarchialClusterer implements Clusterer {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Num of clusters = " + this.idCount + "\n");
-        sb.append(this.printClusterDetails(this.rootCluster, ""));
+        // sb.append(this.printClusterDetails(this.rootCluster, ""));
         return sb.toString();
     }
 

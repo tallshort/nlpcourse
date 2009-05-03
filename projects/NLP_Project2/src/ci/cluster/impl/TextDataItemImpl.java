@@ -35,5 +35,9 @@ public class TextDataItemImpl implements TextDataItem {
         this.cluster = cluster;
     }
 
+    @Override
+    public String toString() {
+        return this.data.toString();
+    }
 
 }

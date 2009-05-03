@@ -169,7 +169,7 @@ public class UnitTest {
     public void testHierarchialCluster() throws Exception {
         List<TextDataItem> blogData = new BlogDataSetCreator()
                 .createLearningData();
-        Clusterer clusterer = new TextHierarchialClusterer(blogData) {
+        Clusterer clusterer = new TextHierarchialClusterer(blogData, 2) {
             @Override
             protected HierCluster createHierCluster(int clusterId,
                     HierCluster c1, HierCluster c2, double similarity,
@@ -179,17 +179,18 @@ public class UnitTest {
             }
         };
         List<TextCluster> clusters = clusterer.cluster();
-        System.out.println("");
-        System.out.println(clusterer);
+        assertEquals(2, clusters.size());
+        System.out.println(clusters.get(0).getDataItems());
+        System.out.println(clusters.get(1).getDataItems());
     }
 
-     @Test
-     public void testNamedEntityRecognizer() throws Exception {
-     INamedEntityRecognizer recognizer = new StandfordNamedEntityRecognizer();
-     String text = "first service mortgagefirst service mortgage, u 1st service mortgage, tony bryant, debra tillman, college park, georgia mortgage, mortgage lenders, atlanta lenders, home banc, georgia lenders,      union city, tucker, alabama, new orleans, equal housing lender, hud      homes, refi, art huntley, lenders, namb, fha, va, remax, investor loans,      u first realty, mortgage lenders, free, FREE, atlanta mortgage loans,      georgia mortgage loans, louisiana mortgage loans, alabama mortgage loans,      birmingham mortgage loans, tuscaloosa mortgage loans, new orleans      mortgage loans, atlanta mortgage companies, georgia mortgage companies,      louisiana mortgage companies, alabama mortgage companies, birmingham      mortgage companies, hud homes, hud home loans, georgia foreclosures,      alabama foreclosures, louisiana foreclosures, investor loans, first time      home buyer loans, relocation loans, commercial loans, 80/20 loans, fha      loans, va loans, immigrant loans, down payment assistance, construction      loansofficial website of First Service Mortgage offering all types of      mortgages";
-     List<String> namedEntities = recognizer.recognizeNamedEntities(text);
-     assertEquals(19, namedEntities.size());
-     }
+//     @Test
+//     public void testNamedEntityRecognizer() throws Exception {
+//     INamedEntityRecognizer recognizer = new StandfordNamedEntityRecognizer();
+//     String text = "first service mortgagefirst service mortgage, u 1st service mortgage, tony bryant, debra tillman, college park, georgia mortgage, mortgage lenders, atlanta lenders, home banc, georgia lenders,      union city, tucker, alabama, new orleans, equal housing lender, hud      homes, refi, art huntley, lenders, namb, fha, va, remax, investor loans,      u first realty, mortgage lenders, free, FREE, atlanta mortgage loans,      georgia mortgage loans, louisiana mortgage loans, alabama mortgage loans,      birmingham mortgage loans, tuscaloosa mortgage loans, new orleans      mortgage loans, atlanta mortgage companies, georgia mortgage companies,      louisiana mortgage companies, alabama mortgage companies, birmingham      mortgage companies, hud homes, hud home loans, georgia foreclosures,      alabama foreclosures, louisiana foreclosures, investor loans, first time      home buyer loans, relocation loans, commercial loans, 80/20 loans, fha      loans, va loans, immigrant loans, down payment assistance, construction      loansofficial website of First Service Mortgage offering all types of      mortgages";
+//     List<String> namedEntities = recognizer.recognizeNamedEntities(text);
+//     assertEquals(19, namedEntities.size());
+//     }
 
 //     @Test
 //     public void testMicroformatsExtractor() {
