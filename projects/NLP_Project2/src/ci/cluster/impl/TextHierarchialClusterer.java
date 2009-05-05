@@ -34,9 +34,25 @@ public abstract class TextHierarchialClusterer implements Clusterer {
 
     public List<TextCluster> cluster() {
         this.createInitialClusters();
-        while (this.availableClusters.size() > this.numOfRootClusters) {
-            this.addNextCluster();
+        // Determine the type of clustering (fixed or dynamic)
+        if (this.numOfRootClusters > 0) { // Fixed 
+            while (this.availableClusters.size() > this.numOfRootClusters) {
+                this.addNextCluster();
+            }
+        } else { // Dynamic
+            while (this.availableClusters.size() > 1) {
+                List<HierDistance> sortDist = new ArrayList<HierDistance>();
+                sortDist.addAll(this.allDistances);
+                Collections.sort(sortDist);
+                HierDistance hd = sortDist.get(0);
+                if (hd.getSimilarity() > STOPPING_SIMILARITY_THRESHOLD) {
+                    this.addNextCluster();
+                } else {
+                    break;
+                }
+            }
         }
+        System.out.println("Num of clusters: " + this.availableClusters.size());
         return new ArrayList<TextCluster>(this.availableClusters.values());
     }
 

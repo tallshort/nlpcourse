@@ -192,13 +192,4 @@ public class UnitTest {
 //     assertEquals(19, namedEntities.size());
 //     }
 
-//     @Test
-//     public void testMicroformatsExtractor() {
-//     AbstractExtractor extractor
-//     = new MofoMicroformatsExtractor("asset/microformats_extractor.rb");
-//     extractor.setDatasetDir("weps2007/test");
-//     extractor.setTargetDir("test_webpages_microformats");
-//     extractor.extractContents();
-//     }
-
 }

@@ -39,6 +39,6 @@ public class MofoMicroformatsExtractor extends AbstractExtractor implements
         System.out.println(filePath + " " + name + " " + rank);
         String microformats = extractMicroformats(filePath);
         TextFile.write(this.getTargetDir() + "/"
-                + name + "_" + rank + "_" + "microformats.txt", microformats);
+                + name + "_" + rank + ".txt", microformats);
     }
 }

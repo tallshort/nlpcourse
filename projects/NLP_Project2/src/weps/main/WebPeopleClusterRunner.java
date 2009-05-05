@@ -25,7 +25,7 @@ public class WebPeopleClusterRunner {
     
     public static void main(String[] args) throws Exception {
         WebPeopleClusterRunner runner = new WebPeopleClusterRunner();
-        runner.setDataSetDir("merged_data_conll_all");
+        runner.setDataSetDir("merged_data_conll_url_desc");
         runner.setTargetDir("cluster_results");
         runner.runClustering();
     }
@@ -47,11 +47,12 @@ public class WebPeopleClusterRunner {
             // Clustering
             int clusterNum = clusterNumberMap.get(name);
             
-            Clusterer clusterer = createWebPeopleHierClusterer(webPeopleData, clusterNum);
+            Clusterer clusterer = createWebPeopleHierClusterer(webPeopleData, -1);
             // Clusterer clusterer = createWebPeopleKMeansClusterer(webPeopleData, clusterNum);
             
+            System.out.print(name + ": ");
             List<TextCluster> clusters = clusterer.cluster();
-            System.out.println(clusterer);
+            // System.out.println(clusterer);
             // Gold standard XML cluster files
             generateXMLClusterResults(name, clusters, discardedMap);
         }
