@@ -3,8 +3,10 @@ package weps.main;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import weps.extractor.AbstractExtractor;
 import weps.extractor.ClusterPriorExtractor;
 import weps.extractor.ClutoClusterXMLGenerator;
+import weps.extractor.MofoMicroformatsExtractor;
 import weps.extractor.NamedEntitiesExtractor;
 import weps.extractor.RawDataMerger;
 import weps.extractor.TermFrequencyExtractor;
@@ -22,6 +24,7 @@ public class DataProcessing {
         // dp.extractXMLDescriptions();
         //dp.extractNamedEntities(); 
         dp.mergeRawData();
+        // dp.extractMicroformats();
         // dp.runScorer();
         // dp.calcTermFrequency();
         // dp.extractClusterPriors();
@@ -31,10 +34,12 @@ public class DataProcessing {
     private void mergeRawData() throws Exception {
         RawDataMerger merger = new RawDataMerger();
         merger.setDatasetDir(this.datasetDir);
-        merger.addMergeDir("xml_descriptions", 1);
-        merger.addMergeDir("named_entities_data_conll", 1);
+        merger.addMergeDir("xml_descriptions", 2);
+        merger.addMergeDir("test_webpages_bodies_0.6", 1);
+        merger.addMergeDir("named_entities_data_conll", 3);
+        merger.addMergeDir("microformats", 10);
         merger.addMergeDir("url_data", 1);
-        merger.setTargetDir("merged_data");
+        merger.setTargetDir("merged_data_body_desc2_conll3_url_data");
         merger.setTargetPerson(this.targePerson);
         merger.extractContentsPerDoc();
     }
@@ -83,6 +88,15 @@ public class DataProcessing {
         generator.setClusterNum(0);
         generator.gererateClusterXMLs();
     }
+    
+  public void extractMicroformats() {
+      AbstractExtractor extractor
+          = new MofoMicroformatsExtractor("asset/microformats_extractor.rb");
+      extractor.setDatasetDir("weps2007/test");
+      // extractor.setTargetPerson("Alvin_Cooper");
+      extractor.setTargetDir("microformats");
+      extractor.extractContentsPerDoc();
+  }
     
     private void runScorer() {
         Runtime rn = Runtime.getRuntime();
