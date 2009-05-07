@@ -11,9 +11,7 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 
 import weps.util.TextFile;
-import ci.textanalysis.lucene.impl.PhrasesCacheImpl;
-import ci.textanalysis.lucene.impl.SynonymPhraseStopWordAnalyzer;
-import ci.textanalysis.lucene.impl.SynonymsCacheImpl;
+import ci.textanalysis.lucene.impl.PorterStemStopWordAnalyzer;
 
 import com.google.common.base.Join;
 
@@ -24,8 +22,7 @@ public class RawDataMerger extends AbstractExtractor {
     
     public RawDataMerger() throws IOException {
         this.analyzer
-            = new SynonymPhraseStopWordAnalyzer(new SynonymsCacheImpl(), 
-                    new PhrasesCacheImpl());
+            = new PorterStemStopWordAnalyzer();
     }
     
     @Override
