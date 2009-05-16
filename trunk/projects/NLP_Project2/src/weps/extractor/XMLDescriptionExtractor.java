@@ -39,10 +39,14 @@ public class XMLDescriptionExtractor extends AbstractExtractor {
             // e.g. Alvin_Copper_alvin_copper_ALVIN_COOPER
             String[] nameParts
                 = (name + "_" + name.toLowerCase() + "_" + name.toUpperCase()).split("_");
-            String title
-                = docElement.getAttributeValue("title").replaceAll(Join.join("|", nameParts), "");
-            String snippet
-                = docElement.getFirstChildElement("snippet").getValue().replaceAll(Join.join("|", nameParts), "");;
+            String title = "";
+            if (docElement.getAttributeValue("title") != null) {
+                title = docElement.getAttributeValue("title").replaceAll(Join.join("|", nameParts), "");
+            }
+            String snippet = "";
+            if (docElement.getFirstChildElement("snippet") != null) {
+                snippet = docElement.getFirstChildElement("snippet").getValue().replaceAll(Join.join("|", nameParts), "");
+            }
             String outputPath = this.getTargetDir() + "/" + name + "_" + rank + ".txt";
             System.out.println("Extract XML Description " + name + " " + rank);
             TextFile.write(outputPath, title + "\n" + snippet);
