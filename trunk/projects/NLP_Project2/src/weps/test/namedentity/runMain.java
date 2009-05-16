@@ -21,12 +21,19 @@ public class runMain {
     public static void main(String[] args) {
         // TODO Auto-generated method stub
         /* 先将所有文件写入.m 和 .clabel文件 然后进行exe调用执行CLUTO产生所有分类文件 */
-
+    	String dataDir="merged_data_body0.6_url_des_NE";
         int classNum = 40; // 设置分类个数
-        int[] num={42,18,18,1,27,41,38,62,58,80,47,14,54,82,32,65,33,50,69,81,20,24,38,56,35,41,72,71,51,90};
-        File sourceDir = new File("merged_data_all2008_all"); // 存放源数据的地方
-        File[] allFile = sourceDir.listFiles();
-        //processDiscard(allFile,"merged_data_all2008_all");   //处理丢失的文件，以对齐行标
+        int[] num={42,18,18,1,27,41,38,62,58,80,47,14,54,82,32,65,33,50,69,81,20,24,38,1,35,41,72,71,51,90};
+        int[] numZhang={52,49,43,43,59,56,47,68,58,56,52,41,70,69,60,61,55,54,65,57,44,48,71,28,57,61,54,63,59,62};
+        int[] numZhang2={49,43,33,38,55,51,44,62,49,49,41,32,60,62,44,50,46,47,53,48,42,42,62,21,50,51,42,57,52,52};
+        int[] numZhang15={38,34,28,25,36,36,36,51,33,38,30,24,47,45,38,43,35,31,44,41,34,31,40,14,43,41,32,41,43,38};
+        HashMap<String,String> name=new HashMap<String,String>();
+        HashClass(name);
+        File sourceDir = new File(dataDir); // 存放源数据的地方
+        File[] all = sourceDir.listFiles();
+        processDiscard(all,dataDir);   //处理丢失的文件，以对齐行标
+        File source=new File(dataDir);
+        File[] allFile=source.listFiles();
         String lastName = allFile[0].getName();
         lastName = lastName.substring(0, lastName.lastIndexOf("_"));// 取得当前名字
         int lastPos = 0;
@@ -38,15 +45,47 @@ public class runMain {
                 System.out.println("正在处理:" + lastName);
                 processAll(allFile, lastName, lastPos, i);// 将要处理的文件返回传入
                 lastPos = i;
-                excuteClusty(num[c], lastName);
+                excuteClusty(numZhang15[c], lastName);
                 lastName = currName; // 对下个人进行聚类
                 c++;
             }
         }
         System.out.println("正在处理:" + lastName);
         processAll(allFile, lastName, lastPos, allFile.length);// 处理最后一个人
-        excuteClusty(num[29], lastName);
+        excuteClusty(numZhang15[29], lastName);
     }
+	private static void HashClass(HashMap<String, String> name) {
+		name.put("Alvin_Cooper","50");
+		name.put("Harry_Hughes","50");
+		name.put("Jonathan_Brooks","50");
+		name.put("Jude_Brown", "50");
+		name.put("Karen_Peterson", "50");
+		name.put("Marcy_Jackson", "50");
+		name.put("Martha_Edwards", "50");
+		name.put("Neil_Clark", "50");
+		name.put("Stephan_Johnson", "50");
+		name.put("Violet_Howard", "50");
+		name.put("Dekang_Lin", "30");
+		name.put("Chris_Brockett", "30");
+		name.put("James_Curran", "30");
+		name.put("Mark_Johnson", "30");
+		name.put("Jerry_Hobbs", "30");
+		name.put("Frank_Keller", "30");
+		name.put("Leon_Barrett", "30");
+		name.put("Robert_Moore", "30");
+		name.put("Sharon_Goldwater", "30");
+		name.put("Stephen_Clark", "30");
+		name.put("Arthur_Morgan", "50");
+		name.put("James_Morehead", "50");
+		name.put("James_Davidson", "50");
+		name.put("Patrick_Killen", "50");
+		name.put("William_Dickson", "50");
+		name.put("George_Foster", "50");
+		name.put("James_Hamilton", "50");
+		name.put("John_Nelson", "50");
+		name.put("Thomas_Fraser", "50");
+		name.put("Thomas_Kirk", "50");
+	}
     private static void processDiscard(File[] fileList,String path)
     {
     	int no=0;
@@ -104,15 +143,15 @@ public class runMain {
                     "-clustfile=matrixFile\\" + lastName + "0"
                     + ".cluster "
                     //+"-agglofrom=80 "
-                    //+"-rowmodel=log "
+                    //+"-rowmodel=maxtf "
                     +"-sim=cos "
-                    //+"-colmodel=idf " 
+                    +"-colmodel=idf " 
                     //+"-mincomponent=8 "
                     //+"cstype=best "  //聚类算法为rb rbr graph才可用
                     //+"-nnbrs=80 "
                     +"-colprune=1 "   //**选择最有影响的列数，总列数*系数
-                    + "-crfun=upgma "// 最后分类文件
-                    +"-showtree " + "-showfeatures "
+                    + "-crfun=slink "// 最后分类文件
+                    //+"-showtree " + "-showfeatures "+"-labeltree "+"-showsummaries=cliques "
                     + "-clabelfile=matrixFile\\" + lastName + ".clabel " + // 添加列标文件
                     "matrixFile\\" + lastName + ".m " + classNum;
             Process p = Runtime.getRuntime().exec(s); // 要处理的矩阵文件
