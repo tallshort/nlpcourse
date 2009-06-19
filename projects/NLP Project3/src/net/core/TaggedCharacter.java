@@ -11,7 +11,7 @@ public class TaggedCharacter {
     /**
      * 构造标注字
      * 
-     * @param character 字内容
+     * @param character 字文本
      * @param entityTag 实体标注
      */
     public TaggedCharacter(String character, String entityTag) {

@@ -37,7 +37,7 @@ public class Sentence {
     /**
      * 添加标注字
      * 
-     * @param character 字
+     * @param character 字文本
      * @param entityTag 命名实体标注
      */
     public void addTaggedCharacter(String character, String entityTag) {
@@ -57,7 +57,7 @@ public class Sentence {
     /**
      * 添加标注词
      * 
-     * @param segment 词
+     * @param segment 词文本
      * @param posTag  词性
      */
     public void addTaggedSegment(String segment, String posTag) {
