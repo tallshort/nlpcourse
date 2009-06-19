@@ -12,7 +12,7 @@ import net.util.TextFile;
 
 public class DataProcessing {
     
-    private String dataFile = "Train_default_70.Ner";
+    private String dataFile = "Test_default.Ner";
     
     private boolean includeSegment = false;
     private boolean includePreSuffix = true;
@@ -36,7 +36,8 @@ public class DataProcessing {
         // dp.generateInternalTrainData();
         // dp.generateStandardResultFile();
         // dp.generateSegPosTaggedTrainingDataFile();
-        dp.printDifferences();
+        dp.generateTestResultFile();
+        // dp.printDifferences();
         
        // String file = "Train_default.Ner";
         // new NamePrefixProcessor().process(file);
@@ -169,6 +170,25 @@ public class DataProcessing {
             }
         }
         TextFile.write("differences13.txt", sb.toString());
+    }
+    
+    public void generateTestResultFile() {
+        String testResultFile = "testresult15.txt";
+        List<String> testResults = new TextFile(testResultFile);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < testResults.size(); i++) {
+            String line = testResults.get(i);
+            if (line.equals("")) {
+                sb.append("\n");
+            } else {
+                String[] parts = line.split("\t");
+                String character = parts[0];
+                String entityTag = parts[parts.length - 1];
+                sb.append(character).append(" ");  
+                sb.append(entityTag).append("\n");
+            }
+        }
+        TextFile.write("standard_" + testResultFile, sb.toString());
     }
 
     public static void get70TrainDataMark() {
