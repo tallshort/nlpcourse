@@ -10,7 +10,7 @@ import net.core.Sentence;
 import net.core.TaggingExpander;
 import net.util.TextFile;
 
-public class DataPreProcessing {
+public class DataProcessing {
     
     private String dataFile = "Train_default_70.Ner";
     
@@ -21,7 +21,7 @@ public class DataPreProcessing {
     private Set<String> orgSuffixSet = new HashSet<String>();
     private Set<String> locSuffixSet = new HashSet<String>();
     
-    public DataPreProcessing() {
+    public DataProcessing() {
         personPrefixSet.addAll(new TextFile("personPrefix.txt"));
         orgSuffixSet.addAll(new TextFile("orgSuffix.txt"));
         locSuffixSet.addAll(new TextFile("locSuffix.txt"));
@@ -32,7 +32,7 @@ public class DataPreProcessing {
 
     public static void main(String[] args) throws FileNotFoundException {
         // get70TrainDataMark();
-        DataPreProcessing dp = new DataPreProcessing();
+        DataProcessing dp = new DataProcessing();
         // dp.generateInternalTrainData();
         // dp.generateStandardResultFile();
         // dp.generateSegPosTaggedTrainingDataFile();
@@ -43,7 +43,7 @@ public class DataPreProcessing {
        // new OrganizationSuffixProcessor().process(file);
     }
     
-    private void generateInternalTrainData() {
+    public void generateInternalTrainData() {
         String expandDataFile = "expand_" + dataFile;
         TaggingExpander expander = new TaggingExpander();
         List<Sentence> sentences = expander.expand(new TextFile(dataFile));
@@ -55,7 +55,7 @@ public class DataPreProcessing {
         TextFile.write(expandDataFile, sb.toString());
     }
     
-    private void generateSegPosTaggedTrainingDataFile() {
+    public void generateSegPosTaggedTrainingDataFile() {
         String expandFile = "expand_" + this.dataFile;
         List<String> dataLines = new TextFile(expandFile);
         List<String> posTags = new ArrayList<String>();
@@ -108,7 +108,7 @@ public class DataPreProcessing {
         TextFile.write("pos_pre_suf_" + dataFile, sb.toString());
     }
     
-    private void generateStandardResultFile() {
+    public void generateStandardResultFile() {
         String resultFile = "result6.txt";
         List<String> dataLines = new TextFile(resultFile);
         List<String> entityTags = new ArrayList<String>();
@@ -155,8 +155,8 @@ public class DataPreProcessing {
         
     }
     
-    private void printDifferences() {
-        List<String> rawDataLines = new TextFile("standard_result6.txt");
+    public void printDifferences() {
+        List<String> rawDataLines = new TextFile("result13.txt");
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rawDataLines.size(); i++) {
             if (rawDataLines.get(i).equals("")) {
@@ -168,10 +168,10 @@ public class DataPreProcessing {
                System.out.println("Line: " + (i + 1) + " " + rawDataLines.get(i)); 
             }
         }
-        TextFile.write("differences.txt", sb.toString());
+        TextFile.write("differences13.txt", sb.toString());
     }
 
-    private static void get70TrainDataMark() {
+    public static void get70TrainDataMark() {
         List<String> lines = new TextFile("Train_default.Ner");
         int lineNum = 1;
         int sentenceNum = 1;

@@ -10,6 +10,12 @@ public class TaggingExpander {
 
     private SegTag segTag = new SegTag();
     
+    /**
+     * 将指定数据行进行分词和词性信息的扩展
+     * 
+     * @param dataLines 指定的数据行列表
+     * @return 标注后的句子列表
+     */
     public List<Sentence> expand(List<String> dataLines) {
         List<Sentence> sentenceList = new ArrayList<Sentence>();
         

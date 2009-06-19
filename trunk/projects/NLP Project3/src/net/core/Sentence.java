@@ -18,14 +18,28 @@ public class Sentence {
     
     private StringBuilder content = new StringBuilder();
     
+    /**
+     * 构造句子
+     * 
+     * @param startLineNumber 指定的起始行号
+     */
     public Sentence(int startLineNumber) {
         this.startLineNumber = startLineNumber;
     }
     
+    /**
+     * 获取句子的起始行号
+     */
     public int getStartLineNumber() {
         return this.startLineNumber;
     }
 
+    /**
+     * 添加标注字
+     * 
+     * @param character 字
+     * @param entityTag 命名实体标注
+     */
     public void addTaggedCharacter(String character, String entityTag) {
         TaggedCharacter tc = new TaggedCharacter(character, entityTag);
         int offset = this.taggedCharacterMap.keySet().size();
@@ -33,10 +47,19 @@ public class Sentence {
         this.content.append(character);
     }
     
+    /**
+     * 获取句子文本内容
+     */
     public String getContent() {
         return content.toString();
     }
 
+    /**
+     * 添加标注词
+     * 
+     * @param segment 词
+     * @param posTag  词性
+     */
     public void addTaggedSegment(String segment, String posTag) {
         int lineNumber = this.startLineNumber;
         if (this.taggedSegmentList.size() != 0) {
@@ -55,6 +78,9 @@ public class Sentence {
         this.taggedSegmentList.add(ts);
     }
 
+    /**
+     * 获取带有分词和词性标注的词列表
+     */
     public List<TaggedSegment> getTaggedSegmentList() {
         return taggedSegmentList;
     }
