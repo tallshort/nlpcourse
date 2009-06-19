@@ -1,0 +1,26 @@
+如 N
+今 N
+中 B-ORG
+科 I-ORG
+院 I-ORG
+计 I-ORG
+算 I-ORG
+所 I-ORG
+
+如 N
+今 N
+中 B-ORG
+科 I-ORG
+院 I-ORG
+计 I-ORG
+算 I-ORG
+所 I-ORG
+
+如 N
+今 N
+中 B-ORG
+科 I-ORG
+院 I-ORG
+计 I-ORG
+算 I-ORG
+所 I-ORG
