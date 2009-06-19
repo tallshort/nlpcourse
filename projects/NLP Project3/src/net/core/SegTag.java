@@ -16,6 +16,12 @@ public class SegTag {
         this.nPOSmap = nPOSmap;
     }
     
+    /**
+     * 将指定的文本进行分词并加上词性
+     * 
+     * @param text 输入的文本
+     * @return 带有分词与词性标注的文本
+     */
     public String process(String text) {
         try{    
             
